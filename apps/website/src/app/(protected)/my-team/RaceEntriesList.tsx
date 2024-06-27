@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useTransition } from 'react';
 
 import { RaceEntry, Roster } from '@8hourrelay/database';
 import { Button } from '@/components/ui/button';
-import { updateTeamRoster } from '@/actions';
+import { updateTeamRoster } from '@/actions/raceEntryActions';
 import { useRouter } from 'next/navigation';
 import { RaceEntryItem } from './RaceEntryItem';
 

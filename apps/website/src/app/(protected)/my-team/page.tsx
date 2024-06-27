@@ -1,14 +1,14 @@
-import { getUserTeam } from '@/actions';
+import { getUserTeam } from '@/actions/userActions';
+import { EmptyPlaceholder } from '@/components/empty-placeholder';
+import { FormSkeleton } from '@/components/FormSkeleton';
 import { DashboardHeader } from '@/components/header';
 import { DashboardShell } from '@/components/shell';
-import { FormSkeleton } from '@/components/FormSkeleton';
-import { Suspense } from 'react';
-import RaceEntries from './RaceEntries';
-import { EditTeamSettings } from './EditTeamSettings';
-import { capitalize } from '@/lib/utils';
-import { EmptyPlaceholder } from '@/components/empty-placeholder';
 import { Button } from '@/components/ui/button';
+import { capitalize } from '@/lib/utils';
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { EditTeamSettings } from './EditTeamSettings';
+import RaceEntries from './RaceEntries';
 
 const MyTeamPage = async () => {
   const team = await getUserTeam();
@@ -30,6 +30,28 @@ const MyTeamPage = async () => {
           </Link>
         </Button>
       </EmptyPlaceholder>
+    );
+  }
+
+  if (team.payment?.sessionId && team.payment?.status !== 'complete') {
+    return (
+      <div className="mt-10 flex h-full w-full flex-col items-center">
+        <EmptyPlaceholder>
+          <EmptyPlaceholder.Icon name="save" className="text-red-500" />
+          <EmptyPlaceholder.Title>
+            Your open team {capitalize(team.name)} was saved with unfinished
+            payment. Please press the Payment button below to complete the
+            payment.
+          </EmptyPlaceholder.Title>
+          <EmptyPlaceholder.Description></EmptyPlaceholder.Description>
+          <Link
+            href={`/payment?session=${team.payment.sessionId}`}
+            target="_blank"
+          >
+            <Button className="w-full">Payment</Button>
+          </Link>
+        </EmptyPlaceholder>
+      </div>
     );
   }
 

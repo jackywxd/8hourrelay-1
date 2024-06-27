@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { getRosterById } from '@/actions';
+import { getRosterById } from '@/actions/raceEntryActions';
 import { EditTeamRoster } from '@/components/EditTeamRoster';
 import { FormSkeleton } from '@/components/FormSkeleton';
 import { Modal } from '@/components/Modal';

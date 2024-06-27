@@ -1,11 +1,9 @@
 'use client';
-import { startTransition, useCallback, useState, useTransition } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
 
-import { createNewTeam, queryTeamName } from '@/actions';
+import { queryTeamName } from '@/actions/teamActions';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -18,10 +16,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useStepper } from '@/components/ui/stepper';
-import { insertTeamSchema, NewTeam, Race } from '@8hourrelay/database';
+import { NewTeam } from '@8hourrelay/database';
 
 import StepperFormActions from '../../../components/StepFormActions';
-import SubmitStepForm from './SubmitStepForm';
 
 export default function SetupTeamForm({
   team,
@@ -45,7 +42,7 @@ export default function SetupTeamForm({
           }
           return true;
         },
-        { message: 'This name already in use' },
+        { message: 'This name already in use' }
       ),
     password: z.string().min(1, { message: 'Password is required' }),
     slogan: z.string().optional(),
@@ -56,7 +53,7 @@ export default function SetupTeamForm({
       console.log('formData', data);
       console.log(
         'validation result',
-        await zodResolver(teamFormSchema)(data, context, options),
+        await zodResolver(teamFormSchema)(data, context, options)
       );
       return zodResolver(teamFormSchema)(data, context, options);
     },
@@ -71,11 +68,11 @@ export default function SetupTeamForm({
   }
 
   return (
-    <div className="flex item-center justify-center w-full max-w-[600px]">
+    <div className="item-center flex w-full max-w-[600px] justify-center">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="text-start space-y-3 w-full"
+          className="w-full space-y-3 text-start"
         >
           <FormField
             control={form.control}

@@ -23,7 +23,9 @@ export const getCurrentUser = cache(async () => {
       // if user is not found, logout the current session
       await slackSendMsg(`Current no session found!`);
     } else {
-      await slackSendMsg(`Current session found! ${JSON.stringify(session)}`);
+      await slackSendMsg(
+        `Current session found! ${JSON.stringify(session.id)}`
+      );
     }
     const { user } = await getUserAPI(session?.id ?? null);
     if (session && !user) {

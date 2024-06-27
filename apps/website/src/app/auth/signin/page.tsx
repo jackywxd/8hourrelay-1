@@ -1,12 +1,10 @@
-import * as React from 'react';
-
-import { Logo } from '@/components/logo';
-import { Title } from '@/components/title';
+import { ButtonLink } from '@/components/button-link';
 import { Description } from '@/components/description';
+import { Logo } from '@/components/logo';
 import { SignInWith } from '@/components/signin-with';
 import { TextLink } from '@/components/text-link';
-import { ButtonLink } from '@/components/button-link';
-import { LanguageToggleButton } from '@/components/language-toggle-button';
+import { Title } from '@/components/title';
+// import { LanguageToggleButton } from '@/components/language-toggle-button';
 
 import { SignInForm } from './signin-form';
 

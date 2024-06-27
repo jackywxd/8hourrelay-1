@@ -1,15 +1,14 @@
-import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 
+import { getCurrentUser, getUserTeam, listRaces } from '@/actions/userActions';
+import { EmptyPlaceholder } from '@/components/empty-placeholder';
+import { FormSkeleton } from '@/components/FormSkeleton';
 import { DashboardHeader } from '@/components/header';
 import { DashboardShell } from '@/components/shell';
-import { Button } from '@/components/ui/button';
-import CreateTeamSteps from './CreateTeamsController';
-import { FormSkeleton } from '@/components/FormSkeleton';
-import { listRaces, getUserTeam, getCurrentUser } from '@/actions/userActions';
-import { EmptyPlaceholder } from '@/components/empty-placeholder';
-import Link from 'next/link';
 import { capitalize } from '@/lib/utils';
+import Link from 'next/link';
+import CreateTeamSteps from './CreateTeamsController';
 
 export default async function Home() {
   const user = await getCurrentUser();

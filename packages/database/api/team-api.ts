@@ -1,7 +1,6 @@
-import "server-only";
+import 'server-only';
 
-import { and, count, eq } from "drizzle-orm";
-import Stripe from "stripe";
+import { and, count, eq } from 'drizzle-orm';
 
 import {
   db,
@@ -18,7 +17,7 @@ import {
   Team,
   teamsTable,
   updateTeamSchema,
-} from "../db";
+} from '../db';
 
 export const createOpenTeam = async (data: NewTeam, session: NewSession) => {
   const newTeamId = await db.transaction(async (tx) => {
@@ -118,7 +117,13 @@ export const getTeamMembersByOwner = async (id: number) => {
     where: eq(teamsTable.userId, id),
     with: {
       race: true,
-      session: true,
+      session: {
+        columns: {
+          sessionId: true,
+          status: true,
+          paymentStatus: true,
+        },
+      },
       raceEntriesToTeams: {
         with: {
           raceEntry: true,
@@ -178,6 +183,7 @@ export const getAllTeams = async () => {
           email: true,
         },
       },
+      session: true,
     },
   });
   console.log(`all teams result`, result);
@@ -226,8 +232,6 @@ export const getTotalTeamsMembersById = async (
   const result = await db
     .select({ value: count() })
     .from(raceEntriesToTeamsTable)
-    .where(
-      eq(raceEntriesToTeamsTable.teamId, id),
-    );
+    .where(eq(raceEntriesToTeamsTable.teamId, id));
   return result[0].value;
 };

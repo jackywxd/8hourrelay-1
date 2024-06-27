@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useStepper } from '@/components/ui/stepper';
 
 // session is the stripe checkout session
-export default function PaymentStep({ session }: { session: string }) {
+export default function PaymentStep({ session }: { session?: string }) {
   const { activeStep, steps } = useStepper();
 
   if (activeStep !== steps.length) {

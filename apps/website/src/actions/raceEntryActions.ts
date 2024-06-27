@@ -88,8 +88,6 @@ export const createNewRaceEntry = async (
         sessionId: session.sessionId,
       });
       await createOpenRaceEntry(validatedRaceEntry, selectedTeam.id);
-      revalidatePath('/my-team');
-      revalidatePath('/teams');
     }
 
     // no need to revalidate as it will refresh the page

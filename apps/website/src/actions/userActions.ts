@@ -31,7 +31,7 @@ export const getCurrentUser = cache(async () => {
     if (session && !user) {
       // if user is not found, logout the current session
       await slackSendMsg(
-        `Session ${session.id} not found in database ${JSON.stringify(session)} ${JSON.stringify(process.env)}`
+        `Failed to get user info!! stage:${process.env.STAGE} env:${process.env.ENV} NEXT_PUBLIC_SITE_URL:${process.env.NEXT_PUBLIC_SITE_URL} NEXT_PUBLIC_SUPABASE_URL:${process.env.NEXT_PUBLIC_SUPABASE_URL} NEXT_PUBLIC_SUPABASE_ANON_KEY:${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
       );
     }
     console.log('user', user);

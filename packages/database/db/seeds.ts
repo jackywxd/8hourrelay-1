@@ -1,55 +1,55 @@
+import { db, NewRace } from './index';
 import {
   eventsTable,
   insertEventSchema,
   insertRaceSchema,
   racesTable,
-} from "./schema";
-import { db, NewRace } from "./index";
+} from './schema';
 
-const year = "2024";
+const year = '2024';
 
 const event2024 = {
   year,
   name: `8HourRelay`,
   description: `8 Hour Relay Race - 2024`,
-  location: "South Surrey Athletic Park, British Columbia",
-  time: "Sep 7, 2024",
+  location: 'South Surrey Athletic Park, British Columbia',
+  time: 'Sep 7, 2024',
   isActive: true,
   createdAt: new Date(),
-  registerDeadline: "August 25, 2024",
+  registerDeadline: 'August 25, 2024',
 };
 const races: NewRace[] = [
   {
     year,
-    name: "Open",
-    description: "8 Hour Relay - Open Race",
+    name: 'Open',
+    description: '8 Hour Relay - Open Race',
     entryFee: 35,
     isCompetitive: true,
     lowerAge: 18,
     maxTeamSize: 12,
     minFemale: 4,
-    lookupKey: "open_entry_fee",
+    lookupKey: 'open_entry_fee',
   },
   {
     year,
-    name: "Master",
-    description: "8 Hour Relay - Master Race",
+    name: 'Master',
+    description: '8 Hour Relay - Master Race',
     entryFee: 35,
     maxTeamSize: 24,
     isCompetitive: false,
     lowerAge: 18,
-    lookupKey: "master_entry_fee",
+    lookupKey: 'master_entry_fee',
   },
   {
     year,
-    name: "Youth",
-    description: "4 Hour Youth Relay",
+    name: 'Youth',
+    description: '4 Hour Youth Relay',
     entryFee: 20,
     isCompetitive: false,
     maxTeamSize: 24,
     lowerAge: 10,
     upperAge: 18,
-    lookupKey: "youth_entry_fee",
+    lookupKey: 'youth_entry_fee',
   },
 ];
 const seeds = async () => {

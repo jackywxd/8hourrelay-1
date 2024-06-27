@@ -1,11 +1,14 @@
+import Link from 'next/link';
 import { Suspense } from 'react';
 
+import { getCurrentUser } from '@/actions/userActions';
+import { EmptyPlaceholder } from '@/components/empty-placeholder';
+import { FormSkeleton } from '@/components/FormSkeleton';
 import { DashboardHeader } from '@/components/header';
 import { DashboardShell } from '@/components/shell';
-import { FormSkeleton } from '@/components/FormSkeleton';
+import { Button } from '@/components/ui/button';
+import { slackSendMsg } from '@/lib/slack';
 import ProfileForm from '../_components/ProfileForm';
-import { getCurrentUser } from '@/actions/userActions';
-import { redirect } from 'next/navigation';
 
 export default async function Home() {
   // very stupid hack to make it work, supabase is slow
@@ -14,15 +17,24 @@ export default async function Home() {
     await new Promise((resolve) => setTimeout(resolve, 3000));
     user = await getCurrentUser();
     if (!user) {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      user = await getCurrentUser();
-      if (!user) {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        user = await getCurrentUser();
-      }
-      if (!user) redirect('/');
+      await slackSendMsg('Failed to get user info from Supabase');
+      return (
+        <EmptyPlaceholder>
+          <EmptyPlaceholder.Icon name="users" />
+          <EmptyPlaceholder.Title>No Team available yet</EmptyPlaceholder.Title>
+          <EmptyPlaceholder.Description>
+            Failed to get user info! Please refresh the page and try again.
+          </EmptyPlaceholder.Description>
+          <Button>
+            <Link className="link open-button" href="/">
+              Back to Home
+            </Link>
+          </Button>
+        </EmptyPlaceholder>
+      );
     }
   }
+
   return (
     <DashboardShell>
       <DashboardHeader

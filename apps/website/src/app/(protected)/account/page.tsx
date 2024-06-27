@@ -17,14 +17,15 @@ export default async function Home() {
     await new Promise((resolve) => setTimeout(resolve, 3000));
     user = await getCurrentUser();
     if (!user) {
-      await slackSendMsg('Failed to get user info from Supabase');
+      await slackSendMsg(
+        `Failed to get user info!! ${JSON.stringify(process.env)}`
+      );
       return (
         <EmptyPlaceholder>
-          <EmptyPlaceholder.Icon name="users" />
-          <EmptyPlaceholder.Title>No Team available yet</EmptyPlaceholder.Title>
-          <EmptyPlaceholder.Description>
-            Failed to get user info! Please refresh the page and try again.
-          </EmptyPlaceholder.Description>
+          <EmptyPlaceholder.Icon name="user" />
+          <EmptyPlaceholder.Title>
+            Failed to get user info! Please try again later!
+          </EmptyPlaceholder.Title>
           <Button>
             <Link className="link open-button" href="/">
               Back to Home

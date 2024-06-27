@@ -4,7 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { cache } from 'react';
 import 'server-only';
 
-import { authenticate, logoutUser } from '@/queries/server/auth';
+import { slackSendMsg } from '@/lib/slack';
+import { authenticate } from '@/queries/server/auth';
 import { getUserAPI } from '@/queries/server/users';
 import {
   getAllRaces,
@@ -21,7 +22,9 @@ export const getCurrentUser = cache(async () => {
     const { user } = await getUserAPI(session?.id ?? null);
     if (session && !user) {
       // if user is not found, logout the current session
-      await logoutUser();
+      await slackSendMsg(
+        `Session ${session.id} not found in database ${JSON.stringify(session)} ${JSON.stringify(process.env)}`
+      );
     }
     console.log('user', user);
     return user;

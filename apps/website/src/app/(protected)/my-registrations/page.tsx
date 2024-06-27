@@ -3,7 +3,10 @@ import { DashboardHeader } from '@/components/header';
 import { RaceEntryCreateButton } from '@/components/race-create-button';
 import RaceEntries from './RaceEntries';
 import { FormSkeleton } from '@/components/FormSkeleton';
-import { IUserAllRaceEntries, listUserRaceEntries } from '@/actions';
+import {
+  IUserAllRaceEntries,
+  listUserRaceEntries,
+} from '@/actions/raceEntryActions';
 
 export default async function MyRegistrationsPage() {
   const raceEntries: IUserAllRaceEntries = await listUserRaceEntries();

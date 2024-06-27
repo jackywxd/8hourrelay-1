@@ -1,21 +1,18 @@
 'use client';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { startTransition, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { createNewTeam, queryTeamName } from '@/actions';
 import { EmptyPlaceholder } from '@/components/empty-placeholder';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Step, Stepper, useStepper } from '@/components/ui/stepper';
-import { capitalize, openInNewTab } from '@/lib/utils';
-import { insertTeamSchema, NewTeam, Race, Team } from '@8hourrelay/database';
+import { capitalize } from '@/lib/utils';
+import { NewTeam, Race } from '@8hourrelay/database';
 
 import SelectRaceStep from '../../../components/SelectRaceStep';
-import StepperFormActions from '../../../components/StepFormActions';
 import SetupTeamStepForm from './SetupTeamStepForm';
 import SubmitStepForm from './SubmitStepForm';
-import { revalidatePath } from 'next/cache';
 
 const year = new Date().getFullYear().toString();
 

@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { FaRegFaceFrown, FaRegFaceSmile } from 'react-icons/fa6';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { IUserTeam } from '@/actions';
+import { IUserTeam } from '@/actions/userActions';
 import { EmptyPlaceholder } from '@/components/empty-placeholder';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';

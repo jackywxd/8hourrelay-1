@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
+import { listTeams, queryTeamName } from '@/actions/teamActions';
 import ShowTeam from './ShowTeam';
-import { listTeams, queryTeamName } from '@/actions';
 
 interface PageProps {
   params: {
@@ -76,7 +76,7 @@ export default async function TeamPage({ params }: PageProps) {
     redirect('/teams');
   }
   return (
-    <div className="container mx-auto p-3 mt-20">
+    <div className="container mx-auto mt-20 p-3">
       <ShowTeam team={team} />
     </div>
   );

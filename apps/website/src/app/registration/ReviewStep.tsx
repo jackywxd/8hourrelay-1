@@ -1,16 +1,16 @@
 'use client';
+
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { createNewRaceEntry } from '@/actions';
+import { createNewRaceEntry } from '@/actions/raceEntryActions';
 
 import StepperFormActions from '@/components/StepFormActions';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -26,13 +26,13 @@ import {
 } from '@/components/ui/form';
 
 import { useStepper } from '@/components/ui/stepper';
-import { capitalize, cn } from '@/lib/utils';
+import { capitalize } from '@/lib/utils';
 import { Race, RaceEntry, Team } from '@8hourrelay/database';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Wavier } from './ShowWavier';
-import { useTransition } from 'react';
 import { usePostHog } from 'posthog-js/react';
+import { useTransition } from 'react';
+import { Wavier } from './ShowWavier';
 
 const raceFormSchema = z.object({
   accepted: z.boolean().refine((value) => value === true, {

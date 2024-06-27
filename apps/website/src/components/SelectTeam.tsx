@@ -1,11 +1,13 @@
 'use client';
-import { ChevronRight, CircleCheck } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { isValidTeamPassword, transferUserTeam } from '@/actions';
+import { isValidTeamPassword } from '@/actions/teamActions';
+import { transferUserTeam } from '@/actions/raceEntryActions';
 import {
   Form,
   FormControl,
@@ -19,6 +21,9 @@ import { capitalize, cn } from '@/lib/utils';
 import { AllTeams, RaceEntryRoster, Team } from '@8hourrelay/database';
 import { Input, Radio, RadioGroup } from '@headlessui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Icons } from './icons';
+import { Button } from './ui/button';
 import {
   Card,
   CardContent,
@@ -26,10 +31,6 @@ import {
   CardFooter,
   CardHeader,
 } from './ui/card';
-import { Button } from './ui/button';
-import { Icons } from './icons';
-import { useFormState } from 'react-dom';
-import { useRouter } from 'next/navigation';
 
 export function SelectTeam({
   teams,

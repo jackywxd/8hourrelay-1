@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 
+import { queryTeamName } from '@/actions/teamActions';
 import ShowTeam from './ShowTeam';
-import { queryTeamName } from '@/actions';
 
-export default async function TeamPage({ params, searchParams }: PageProps) {
+export default async function TeamPage({ params }: any) {
   const teamName = params.team;
 
   // we should have team name and race id

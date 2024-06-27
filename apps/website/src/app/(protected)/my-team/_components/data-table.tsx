@@ -1,24 +1,7 @@
 'use client';
 import * as React from 'react';
-import {
-  ColumnDef,
-  SortingState,
-  VisibilityState,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  useReactTable,
-  getPaginationRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  RowData,
-  getGroupedRowModel,
-  ColumnResizeMode,
-  ColumnSizingState,
-} from '@tanstack/react-table';
 
+import { updateEntryRoster } from '@/actions/raceEntryActions';
 import {
   Table,
   TableBody,
@@ -28,10 +11,26 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DataTablePagination } from './pagenation';
-import { DataTableToolbar } from './toolbar';
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  ColumnSizingState,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getGroupedRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  RowData,
+  SortingState,
+  useReactTable,
+  VisibilityState,
+} from '@tanstack/react-table';
+
 import { ColumnResizer } from './column-resizer';
-import { updateEntryRoster } from '@/actions';
+import { DataTableToolbar } from './toolbar';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {

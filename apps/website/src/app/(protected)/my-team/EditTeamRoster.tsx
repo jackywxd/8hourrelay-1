@@ -43,7 +43,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { capitalize, cn } from '@/lib/utils';
 import { getDirtyFields } from '@/lib/utils/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { updateEntryRoster } from '@/actions';
+import { updateEntryRoster } from '@/actions/raceEntryActions';
 import { Roster } from '@8hourrelay/database';
 
 export function EditTeamRoster({

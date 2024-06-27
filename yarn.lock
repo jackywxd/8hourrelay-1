@@ -8860,6 +8860,7 @@ __metadata:
   resolution: "website@workspace:apps/website"
   dependencies:
     "@8hourrelay/database": "npm:*"
+    "@dotenvx/dotenvx": "npm:^1.0.0"
     "@headlessui/react": "npm:^2.1.0"
     "@hookform/resolvers": "npm:^3.6.0"
     "@playwright/test": "npm:^1.45.0"

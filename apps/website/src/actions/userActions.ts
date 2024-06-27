@@ -1,26 +1,28 @@
 'use server';
 
-import 'server-only';
 import { revalidatePath } from 'next/cache';
 import { cache } from 'react';
+import 'server-only';
 
+import { authenticate, logoutUser } from '@/queries/server/auth';
+import { getUserAPI } from '@/queries/server/users';
 import {
   getAllRaces,
   getTeamMembersByOwner,
-  getUser,
   TeamByOwner,
   updateUser,
   updateUserSchema,
   User,
 } from '@8hourrelay/database';
-import { authenticate } from '@/queries/server/auth';
-import { getUserAPI } from '@/queries/server/users';
 
 export const getCurrentUser = cache(async () => {
   try {
     const { user: session } = await authenticate();
     const { user } = await getUserAPI(session?.id ?? null);
-
+    if (session && !user) {
+      // if user is not found, logout the current session
+      await logoutUser();
+    }
     console.log('user', user);
     return user;
   } catch (error) {

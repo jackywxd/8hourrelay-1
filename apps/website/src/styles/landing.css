@@ -1,0 +1,439 @@
+@import "./normalize.css";
+@import "./variables.css";
+@import "./style.css";
+
+.hero-section {
+  padding-block: 150px;
+  background-color: white;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  height: clamp(48em, 42vmin + 105px, 960px);
+  overflow: hidden;
+}
+
+.hero-text {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 140ch;
+  margin: auto;
+  z-index: 1;
+  padding: var(--padding);
+}
+
+.countdown {
+  font: "Quicksand", sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5vw;
+  font-weight: bold;
+  opacity: 0.8;
+  color: var(--clr-accent-primary);
+}
+
+.countdown-container {
+  width: 100%;
+  display: grid;
+  gap: 1vw;
+  padding-top: 0;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+}
+
+.countdown-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* gap: 35px; */
+}
+
+.number {
+  font-family: var(--ff-number);
+  font-size: clamp(3rem, calc(10vw + 0.5rem), 5.5rem);
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.unit {
+  font-family: "Quicksand", sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--clr-unit);
+  font-weight: 500;
+}
+
+.hero-section > *:not(.hero-text) {
+  pointer-events: none;
+}
+
+.thank {
+  font-family: "Barlow", sans-serif;
+  font-style: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25rem;
+  color: var(--text-muted);
+}
+
+.sponsors {
+  background-color: white;
+  padding-block: 3rem;
+}
+
+.sponsor-logo-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.sponsor-logo {
+  height: 50px;
+  width: auto;
+}
+
+.mark-calendar {
+  padding-block: 50px 150px;
+  color: black;
+}
+
+.mark-calendar .content-container {
+  display: grid;
+  justify-content: center;
+  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.event-info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.event-info-item.entry-fee {
+  max-width: 230px;
+  justify-self: center;
+}
+
+.fee-container {
+  column-count: 2;
+  column-gap: 20px;
+}
+
+.label {
+  font-family: "Lato", sans-serif;
+  font-size: 0.9em;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.category {
+  text-transform: uppercase;
+  font-size: 10px;
+  margin-top: 10px;
+}
+
+.value {
+  font-family: "Lato", sans-serif;
+  font-size: 14px;
+}
+
+.fee {
+  font-family: var(--ff-fee);
+  font-size: 3rem;
+  font-style: italic;
+}
+
+.notes {
+  text-transform: uppercase;
+  font-size: 10px;
+  color: var(--clr-accent-primary);
+}
+
+.marathon-bg {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+
+.volunteering {
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-block: 75px 100px;
+  color: black;
+}
+
+.volunteering p {
+  line-height: 160%;
+}
+
+.sponsorship {
+  background-color: rgba(255, 255, 255, 0.85);
+  color: black;
+  padding-block: 75px;
+}
+
+.sponsorship h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 10px;
+  letter-spacing: 0.025em;
+  margin-bottom: 10px;
+  font-family: "Lato", sans-serif;
+}
+
+.sponsorship .grid {
+  font-size: 0.8rem;
+}
+
+.sponsorship .group {
+  margin-bottom: 10px;
+}
+
+.gallery .landing-section-title {
+  font-weight: 400;
+}
+
+.gallery .content-container {
+  gap: var(--gap);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  padding-bottom: 30px;
+}
+
+.gallery .img-container {
+  height: 275px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery img {
+  /* max-width: fit-content; */
+}
+
+.from {
+  text-transform: none;
+  font-style: italic;
+  letter-spacing: 0;
+}
+
+.text-container {
+  position: absolute;
+  z-index: 2;
+}
+
+.text-container p {
+  color: rgb(255 255 255 / 0.4);
+  font-size: 6rem;
+  font-style: italic;
+  font-family: var(--ff-header);
+}
+
+.mark-calendar {
+  background: var(--gradient-stripe);
+}
+
+.diagonal {
+  --background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
+  --skew-angle: -7deg;
+
+  position: relative;
+  isolation: isolate;
+  background: #eee;
+}
+
+.diagonal::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  background: var(--background);
+  inset: 0;
+  transform: skewY(var(--skew-angle));
+}
+
+.diagonal::before {
+  --background: linear-gradient(135deg, #12c2e9, #c471ed, #f64f59);
+  --skew-angle: 7deg;
+
+  content: "";
+  position: absolute;
+  z-index: -2;
+  background: var(--background);
+  inset: 0;
+  transform: skewY(var(--skew-angle));
+}
+
+.our-mission {
+  padding-block: 5em;
+  font-family: var(--ff-body);
+  font-size: 1rem;
+  color: var(--text-light);
+  line-height: 1.65;
+  letter-spacing: 0.025em;
+}
+
+.our-mission p {
+  font-size: clamp(0.75rem, calc(2.5vw + 0.25rem), 1rem);
+}
+
+.our-mission .landing-section-title {
+  color: var(--clr-accent-secondary);
+}
+
+.our-mission h3 {
+  margin-top: 50px;
+}
+
+.our-mission h4 {
+  font-size: clamp(0.95rem, calc(2.5vw + 0.25rem), 1.15rem);
+}
+
+.rules {
+  background-color: var(--bg-dark);
+  padding-block: 4.5em;
+  text-align: left;
+}
+
+.rules h2 {
+  text-align: center;
+}
+
+.rules h3 {
+  color: skyblue;
+}
+
+.rules ::marker {
+  font-family: "FortinetOne";
+  color: skyblue;
+  margin-right: 10px;
+}
+
+.rules .content-container {
+  display: grid;
+  gap: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+}
+
+.rules .content-container > * {
+  flex: 1;
+}
+
+.rules ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.rules summary {
+  color: white;
+  font-family: var(--ff-header);
+  line-height: 200%;
+}
+
+.rules li {
+  border-bottom: 1px solid black;
+  box-shadow: 0 1px 0 0 var(--border-color-darkbg);
+  padding-block: 15px;
+}
+
+.rules details div {
+  line-height: 155%;
+  font-size: 12px;
+  margin-bottom: 5px;
+  color: var(--text-label);
+}
+
+.rules .column-left > ul > li:last-of-type,
+.rules .column-right > ul > li:last-of-type {
+  padding-bottom: 0;
+  border-bottom: none;
+  box-shadow: none;
+}
+
+.rules .table-name {
+  color: var(--clr-accent-secondary);
+  font-size: 1.15rem;
+  text-align: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 15px;
+}
+
+.rules .table-header {
+  font-weight: bold;
+  font-size: 15px;
+  color: var(--clr-accent-secondary);
+}
+
+.coefficient-table {
+  list-style-type: none;
+  padding: 0;
+  border-top: 1px solid var(--border-color-darkbg);
+  box-shadow: 0 -1px 0 0 black;
+}
+
+.coefficient-table li {
+  border-bottom: 1px solid black;
+  box-shadow: 0 1px 0 0 var(--border-color-darkbg);
+  padding-block: 10px;
+  display: grid;
+  text-align: center;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+}
+
+section.keep-in-touch {
+  text-align: left;
+  background-color: #051a33;
+}
+
+section.keep-in-touch .button-container {
+  justify-content: flex-end;
+}
+
+@media only screen and (max-width: 1279px) {
+  .sponsorship .content-container {
+    padding-inline: 10vw;
+  }
+
+  .sponsorship .grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .rules .content-container {
+    gap: 40px;
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media only screen and (max-width: 1165px) {
+  .mark-calendar .content-container {
+    max-width: 450px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media only screen and (max-width: 639px) {
+  /* .countdown-item {
+		gap: 15px;
+	} */
+
+  .countdown-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5vw;
+  }
+
+  .hero-text {
+    margin-top: 7vmax;
+  }
+}
+
+@media only screen and (max-width: 536px) {
+  .mark-calendar .content-container {
+    grid-template-columns: 1fr;
+  }
+}

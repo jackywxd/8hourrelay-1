@@ -1,0 +1,141 @@
+form {
+  display: grid;
+  grid-gap: 15px;
+}
+
+form label span {
+  color: var(--text-muted);
+  font-size: 13px;
+  display: inline-block;
+  width: max-content;
+}
+
+.form-container {
+  display: grid;
+  gap: 30px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.input-container,
+.select.input-container {
+  border: 1px solid var(--border-color-darkbg);
+  position: relative;
+  height: var(--input-height);
+}
+
+.input-container.textarea.read-only {
+  border: none;
+}
+
+.input-container.required label span {
+  position: relative;
+  padding-left: 12px;
+}
+
+.input-container.required label span::after {
+  position: absolute;
+  content: "*";
+  color: var(--clr-accent-secondary);
+  font-size: 24px;
+  left: 0;
+  top: -5px;
+  display: inline-block;
+}
+
+.textarea.input-container {
+  min-height: 120px;
+}
+
+.input-container input,
+.input-container textarea,
+.input-container select {
+  width: 100%;
+  padding-left: 12px;
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: white;
+}
+
+.input-container input:focus,
+.input-container textarea:focus {
+  outline: none;
+  border-radius: 10;
+}
+
+.input-container:focus-within {
+  border-color: var(--clr-accent-secondary);
+}
+
+.input-container:not(.textarea1):focus-within label,
+.input-container:not(.textarea1).has-value label {
+  top: -1.3rem;
+}
+
+.input-container:focus-within input,
+.input-container:focus-within textarea,
+.input-container.has-value input textarea {
+  padding-top: 18px;
+  font-size: 1rem;
+  color: white;
+  font-weight: 400;
+}
+
+.input-container.read-only {
+  display: flex;
+  gap: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 12px;
+  background: #124a83;
+}
+
+.input-container.read-only .value {
+  font-size: 1rem;
+  color: white;
+  font-weight: 400;
+  margin-top: -4px;
+}
+
+.input-container.textarea:focus-within input,
+.input-container.textarea.has-value input {
+  padding-top: 25px;
+}
+
+.input-container:not(.read-only) label {
+  position: absolute;
+  top: 13px;
+  left: 15px;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+/* form on light bg */
+
+form.lightbg .input-container {
+  border: 1px solid var(--border-color);
+}
+
+form.lightbg .input-container:focus-within input,
+form.lightbg .input-container.has-value input,
+form.lightbg .input-container:focus-within textarea,
+form.lightbg .input-container.has-value textarea {
+  color: var(--bg-darkblue);
+}
+
+form.lightbg .input-container label span {
+  color: var(--text-muted);
+}
+
+@media only screen and (max-width: 767px) {
+  .form-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .span-2 {
+    grid-column: span 1;
+  }
+}

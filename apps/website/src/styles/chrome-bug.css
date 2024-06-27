@@ -1,0 +1,14 @@
+/**
+ * Chrome has a bug with transitions on load since 2012!
+ *
+ * To prevent a "pop" of content, you have to disable all transitions until
+ * the page is done loading.
+ *
+ * https://lab.laukstein.com/bug/input
+ * https://twitter.com/timer150/status/1345217126680899584
+ */
+ /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
+
+body.loading * {
+  transition: none !important;
+}

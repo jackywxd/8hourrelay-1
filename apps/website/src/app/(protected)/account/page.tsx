@@ -18,7 +18,7 @@ export default async function Home() {
     user = await getCurrentUser();
     if (!user) {
       await slackSendMsg(
-        `Failed to get user info!! ${JSON.stringify(process.env)}`
+        `Failed to get user info!! ${process.env.STAGE} ${process.env.ENV} ${process.env.NEXT_PUBLIC_SITE_URL}`
       );
       return (
         <EmptyPlaceholder>

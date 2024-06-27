@@ -6,10 +6,10 @@ import 'server-only';
 
 import { slackSendMsg } from '@/lib/slack';
 import { authenticate } from '@/queries/server/auth';
-import { getUserAPI } from '@/queries/server/users';
 import {
   getAllRaces,
   getTeamMembersByOwner,
+  getUser,
   TeamByOwner,
   updateUser,
   updateUserSchema,
@@ -19,15 +19,16 @@ import {
 export const getCurrentUser = cache(async () => {
   try {
     const { user: session } = await authenticate();
-    if (!session) {
+    if (!session || !session.id) {
       // if user is not found, logout the current session
       await slackSendMsg(`Current no session found!`);
+      return null;
     } else {
       await slackSendMsg(
         `Current session found! ${JSON.stringify(session.id)}`
       );
     }
-    const { user } = await getUserAPI(session?.id ?? null);
+    const user = await getUser(session.id);
     if (session && !user) {
       // if user is not found, logout the current session
       await slackSendMsg(

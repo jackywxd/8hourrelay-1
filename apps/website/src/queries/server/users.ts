@@ -25,6 +25,8 @@ export async function getUserAPI(
       await slackSendMsg(`Failed to get user info! ${res.error}`);
       return { user: null };
     }
+
+    await slackSendMsg(`Got user info! ${JSON.stringify(res.data)}`);
     return { user: res.data };
   } catch (error) {
     console.log(error);

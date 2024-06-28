@@ -4,9 +4,11 @@ import { and, asc, count, eq, sql } from 'drizzle-orm';
 
 import {
   db,
+  GenderType,
   insertRaceEntrySchema,
   insertRaceEntryToTeamsSchema,
   insertSessionSchema,
+  lower,
   NewRaceEntry,
   NewSession,
   paymentStatusTable,
@@ -261,3 +263,28 @@ export const getRaceEntryById = async (id: number, userId: number) => {
 };
 
 export type RaceEntryById = Awaited<ReturnType<typeof getRaceEntryById>>;
+
+export const findDuplicateRaceEntry = async (data: {
+  firstName: string;
+  lastName: string;
+  birthYear: string;
+  gender: GenderType;
+  year?: string;
+}) => {
+  const { firstName, lastName, birthYear, gender } = data;
+  const year = data?.year ? data?.year : new Date().getFullYear().toString();
+  const result = await db
+    .select()
+    .from(raceEntriesTable)
+    .where(
+      and(
+        eq(lower(raceEntriesTable.firstName), firstName.toLowerCase()),
+        eq(lower(raceEntriesTable.lastName), lastName.toLowerCase()),
+        eq(raceEntriesTable.isActive, true),
+        eq(raceEntriesTable.birthYear, birthYear),
+        eq(raceEntriesTable.gender, gender),
+        eq(raceEntriesTable.year, year),
+      ),
+    );
+  return result.length > 0;
+};

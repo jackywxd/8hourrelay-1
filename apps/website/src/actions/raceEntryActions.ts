@@ -6,6 +6,7 @@ import 'server-only';
 import {
   createOpenRaceEntry,
   createPaidRaceEntry,
+  findDuplicateRaceEntry,
   getPaymentSessionByTeamId,
   getRaceEntryById,
   getRaceEntryRosterById,
@@ -16,6 +17,7 @@ import {
   NewRaceEntry,
   NewSession,
   Race,
+  RaceEntry,
   Roster,
   selectRaceEntrySchema,
   Team,
@@ -239,6 +241,28 @@ export const transferUserTeam = async (
     // await transferTeam(id, user.id, fromTeam, toTeam);
     revalidatePath('/my-team');
     revalidatePath('/teams');
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const isDuplicatedEntry = async (data: Partial<RaceEntry>) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) throw new Error('User not found');
+    if (data.firstName && data.lastName && data.gender && data.birthYear) {
+      const raceEntry = await findDuplicateRaceEntry({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        birthYear: data.birthYear,
+        gender: data.gender,
+      });
+      if (raceEntry) {
+        return true;
+      }
+    }
+    return false;
   } catch (error) {
     console.log(error);
     throw error;

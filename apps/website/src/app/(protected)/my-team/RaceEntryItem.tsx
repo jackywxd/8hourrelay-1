@@ -1,7 +1,7 @@
-import { RaceEntry, Roster } from '@8hourrelay/database';
-import { MdWoman2, MdMan2, MdEdit, MdPersonRemove } from 'react-icons/md';
-import Link from 'next/link';
 import { capitalize } from '@/lib/utils';
+import { Race, RaceEntry, Roster } from '@8hourrelay/database';
+import Link from 'next/link';
+import { MdEdit, MdMan2, MdPersonRemove, MdWoman2 } from 'react-icons/md';
 
 export const RaceEntryItem = ({
   id,
@@ -9,7 +9,7 @@ export const RaceEntryItem = ({
   roster,
 }: {
   id: number;
-  raceEntry: RaceEntry;
+  raceEntry: Partial<RaceEntry & Race>;
   roster: Roster;
 }) => {
   if (!raceEntry) return null;
@@ -43,9 +43,12 @@ export const RaceEntryItem = ({
           </span>
         </div>
         <div className="flex gap-3">
-          <Link href={`/my-team/roster/${roster.id}?action=edit`}>
-            <MdEdit size={24} />
-          </Link>
+          {!race.isCompetitive && (
+            <Link href={`/my-team/roster/${roster.id}?action=edit`}>
+              <MdEdit size={24} />
+            </Link>
+          )}
+
           <Link href={`/my-team/roster/${roster.id}?action=transfer`}>
             <MdPersonRemove size={24} />
           </Link>

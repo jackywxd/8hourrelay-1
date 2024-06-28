@@ -17,6 +17,7 @@ const RosterPage = async ({
   params: { id: string };
   searchParams: any;
 }) => {
+  if (!id) return null;
   const roster = await getRosterById(+id);
   const teams = await getAllTeams();
   const action = searchParams.action;

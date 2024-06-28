@@ -2,16 +2,18 @@
 import { Reorder } from 'framer-motion';
 import { useEffect, useMemo, useState, useTransition } from 'react';
 
-import { RaceEntry, Roster } from '@8hourrelay/database';
-import { Button } from '@/components/ui/button';
 import { updateTeamRoster } from '@/actions/raceEntryActions';
+import { Button } from '@/components/ui/button';
+import { Race, RaceEntry, Roster } from '@8hourrelay/database';
 import { useRouter } from 'next/navigation';
 import { RaceEntryItem } from './RaceEntryItem';
 
 export function RaceEntriesList({
+  race,
   raceEntries,
   roster,
 }: {
+  race: Race;
   raceEntries: RaceEntry[];
   roster: Roster[];
 }) {
@@ -80,7 +82,10 @@ export function RaceEntriesList({
           <Reorder.Item value={item} key={sortedEntries[item]?.id}>
             <RaceEntryItem
               id={index + 1}
-              raceEntry={sortedEntries[item]}
+              raceEntry={{
+                ...sortedEntries[item],
+                isCompetitive: race.isCompetitive,
+              }} // sortedEntries[item]}
               roster={sortedRosters[item]}
             />
           </Reorder.Item>

@@ -40,11 +40,13 @@ declare module '@tanstack/react-table' {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  isEditable?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data: defaultData,
+  isEditable,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
@@ -89,6 +91,7 @@ export function DataTable<TData, TValue>({
       setEditedRows,
       validRows,
       setValidRows,
+      isEditable,
       updateDB: async () => {
         console.log(`validRow`, Object.keys(validRows));
         for (const rowIndex in validRows) {

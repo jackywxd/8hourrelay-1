@@ -2,15 +2,17 @@
 import { useRouter } from 'next/navigation';
 import { useMemo, useTransition } from 'react';
 
-import { RaceEntry, Roster } from '@8hourrelay/database';
+import { Race, RaceEntry, Roster } from '@8hourrelay/database';
 
 import { columns } from './_components/columns';
 import { DataTable } from './_components/data-table';
 
 export function RaceEntriesTable({
+  race,
   raceEntries,
   roster,
 }: {
+  race: Race;
   raceEntries: RaceEntry[];
   roster: Roster[];
 }) {
@@ -28,8 +30,8 @@ export function RaceEntriesTable({
     });
     const newRoster: any[] = [];
     // console.log(`sortedRaces`, sortedRosters);
-    sortedRosters.forEach((race: Roster) => {
-      const entry = raceEntries.find((entry) => entry.id === race?.raceEntryId);
+    sortedRosters.forEach((r: Roster) => {
+      const entry = raceEntries.find((entry) => entry.id === r?.raceEntryId);
       if (entry) {
         newRoster.push({
           id: entry.id,
@@ -38,9 +40,9 @@ export function RaceEntriesTable({
             : `${entry?.firstName} ${entry?.lastName}`,
           email: entry.email,
           gender: entry.gender,
-          order: race?.raceOrder,
-          bib: race?.bib,
-          timeSlot: race?.raceDuration,
+          order: r?.raceOrder,
+          bib: r?.bib,
+          timeSlot: r?.raceDuration,
         });
       }
     });
@@ -57,7 +59,12 @@ export function RaceEntriesTable({
 
   return (
     <div className="mt-5 w-full">
-      <DataTable columns={columns} data={data} />
+      {/* Open race is not editable */}
+      <DataTable
+        columns={!race?.isCompetitive ? columns : columns.slice(0, 6)}
+        data={data}
+        isEditable={!race.isCompetitive}
+      />
     </div>
   );
 }

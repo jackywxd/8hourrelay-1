@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input';
-import { useState, useEffect, ChangeEvent } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 type Option = {
@@ -14,6 +14,7 @@ export const TableCell = ({ getValue, row, column, table }) => {
   const [value, setValue] = useState(initialValue);
   const [validationMessage, setValidationMessage] = useState('');
 
+  console.log(`header`, row.getValue());
   useEffect(() => {
     setValue(initialValue);
     if (tableMeta?.editedRows[row.id] === false) {

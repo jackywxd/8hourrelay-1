@@ -1,7 +1,10 @@
 'use client';
+import { useFormStatus } from 'react-dom';
+
 import { Button } from '@/components/ui/button';
 import { useStepper } from '@/components/ui/stepper';
-import FormButton from './FormButton';
+
+import { Icons } from './icons';
 
 export default function StepperFormActions() {
   const {
@@ -14,6 +17,7 @@ export default function StepperFormActions() {
   } = useStepper();
 
   if (!prevStep || !resetSteps) return null;
+  const { pending } = useFormStatus();
 
   return (
     <div className="mt-5 flex w-full justify-end gap-2">
@@ -36,7 +40,10 @@ export default function StepperFormActions() {
               Skip
             </Button>
           )}
-          <FormButton size="sm">{isLastStep ? 'Finish' : 'Next'}</FormButton>
+          <Button type="submit" disabled={pending}>
+            {pending && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+            {isLastStep ? 'Finish' : 'Next'}
+          </Button>
         </>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { MouseEvent } from 'react';
-import { MdEdit, MdCheck, MdUndo } from 'react-icons/md';
+import { MdCheck, MdEdit, MdUndo } from 'react-icons/md';
 
 export const EditCell = ({ row, table }) => {
   const meta = table.options.meta;
@@ -25,6 +25,7 @@ export const EditCell = ({ row, table }) => {
     meta?.removeRow(row.index);
   };
 
+  if (meta.isEditable === false) return null;
   return (
     <div className="edit-cell-container">
       {

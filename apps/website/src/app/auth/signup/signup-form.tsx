@@ -1,28 +1,28 @@
 'use client';
 
-import * as React from 'react';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { useRouter } from 'next/navigation';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useForm, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
-import { createClient } from '@/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
+import { createClient } from '@/supabase/client';
 import { usePostHog } from 'posthog-js/react';
 
 const FormSchema = z
@@ -46,19 +46,86 @@ const defaultValues: Partial<FormValues> = {
 };
 
 const SignUpForm = () => {
+  const captchaRef = React.useRef<HCaptcha | null>(null);
+  const [captchaToken, setCaptchaToken] = React.useState<string | null>(null);
+  const { setSession, setUser } = useAuth();
+  const { t } = useTranslation();
+  const onCaptchaChange = (token: string) => setCaptchaToken(token);
+  const onCaptchaExpire = () => setCaptchaToken(null);
+  const [isSubmitting, startTransition] = React.useTransition();
+  const router = useRouter();
+  const posthog = usePostHog();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     mode: 'onSubmit',
     defaultValues,
   });
 
+  function onSubmit(formValues: FormValues) {
+    startTransition(async () => {
+      try {
+        const supabase = createClient();
+        const signed = await supabase.auth.signUp({
+          email: formValues?.email,
+          password: formValues?.newPassword,
+          options: {
+            captchaToken: captchaToken ?? undefined,
+          },
+        });
+
+        // reset captcha after signup
+        captchaRef.current?.resetCaptcha();
+
+        if (signed?.error) throw new Error(signed?.error?.message);
+
+        const unsigned = await supabase.auth.signOut();
+        if (unsigned?.error) throw new Error(unsigned?.error?.message);
+
+        // Analytics
+        posthog.capture('user_sign_up', { email: formValues?.email });
+        setSession(null);
+        setUser(null);
+
+        toast.success(
+          t('FormMessage.you_have_successfully_registered_as_a_member')
+        );
+
+        router.refresh();
+        router.replace('/auth/signin');
+      } catch (e: unknown) {
+        const err = (e as Error)?.message;
+        if (err.startsWith('User already registered')) {
+          toast.error(t('FormMessage.user_already_registered'));
+        } else {
+          toast.error(err);
+        }
+      }
+    });
+  }
+
   return (
     <Form {...form}>
-      <form method="POST" noValidate className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        method="POST"
+        noValidate
+        className="space-y-4"
+      >
         <EmailField />
         <NewPasswordField />
         <ConfirmNewPasswordField />
-        <SubmitButton />
+        {process.env.NEXT_PUBLIC_ENV !== 'dev' && (
+          <HCaptcha
+            sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
+            onVerify={onCaptchaChange}
+            ref={captchaRef}
+            onExpire={onCaptchaExpire}
+          />
+        )}
+        <Button type="submit" disabled={isSubmitting} className="w-full">
+          {t('FormSubmit.signup')}
+        </Button>
       </form>
     </Form>
   );
@@ -145,67 +212,6 @@ const ConfirmNewPasswordField = () => {
         </FormItem>
       )}
     />
-  );
-};
-
-const SubmitButton = () => {
-  const router = useRouter();
-  const { t } = useTranslation();
-  const { handleSubmit, setError, getValues } = useFormContext();
-  const { setSession, setUser } = useAuth();
-  const posthog = usePostHog();
-  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-
-  const onSubmit = async () => {
-    try {
-      setIsSubmitting(true);
-
-      const formValues = getValues();
-
-      const supabase = createClient();
-      const signed = await supabase.auth.signUp({
-        email: formValues?.email,
-        password: formValues?.newPassword,
-      });
-      if (signed?.error) throw new Error(signed?.error?.message);
-
-      const unsigned = await supabase.auth.signOut();
-      if (unsigned?.error) throw new Error(unsigned?.error?.message);
-
-      // Analytics
-      posthog.capture('user_sign_up', { email: formValues?.email });
-      setSession(null);
-      setUser(null);
-
-      toast.success(
-        t('FormMessage.you_have_successfully_registered_as_a_member')
-      );
-
-      router.refresh();
-      router.replace('/auth/signin');
-    } catch (e: unknown) {
-      const err = (e as Error)?.message;
-      if (err.startsWith('User already registered')) {
-        setError('email', {
-          message: t('FormMessage.user_already_registered'),
-        });
-      } else {
-        toast.error(err);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <Button
-      type="submit"
-      onClick={handleSubmit(onSubmit)}
-      disabled={isSubmitting}
-      className="w-full"
-    >
-      {t('FormSubmit.signup')}
-    </Button>
   );
 };
 

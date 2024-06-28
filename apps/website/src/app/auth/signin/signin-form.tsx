@@ -1,29 +1,29 @@
 'use client';
 
-import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useForm, useFormContext } from 'react-hook-form';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
+import { TextLink } from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { TextLink } from '@/components/text-link';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
-import { createClient } from '@/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
+import { createClient } from '@/supabase/client';
 
 const FormSchema = z.object({
   email: z.string().nonempty().max(255).email(),
@@ -38,18 +38,81 @@ const defaultValues: Partial<FormValues> = {
 };
 
 const SignInForm = () => {
+  const ref = React.useRef<HTMLFormElement>(null);
+
+  const captchaRef = React.useRef<HCaptcha | null>(null);
+  const [captchaToken, setCaptchaToken] = React.useState<string | null>(null);
+  const { setSession, setUser } = useAuth();
+  const { t } = useTranslation();
+  const onCaptchaChange = (token: string) => setCaptchaToken(token);
+  const onCaptchaExpire = () => setCaptchaToken(null);
+  const [isSubmitting, startTransition] = React.useTransition();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     mode: 'onSubmit',
     defaultValues,
   });
 
+  const next = (searchParams.get('next') as string) ?? '/account';
+  function onSubmit(formValues: FormValues) {
+    startTransition(async () => {
+      try {
+        console.log(`formValues`, formValues);
+        const supabase = createClient();
+        const signed = await supabase.auth.signInWithPassword({
+          email: formValues?.email,
+          password: formValues?.password,
+          options: {
+            captchaToken: captchaToken ?? undefined,
+          },
+        });
+        // reset captcha after  login
+        captchaRef.current?.resetCaptcha();
+        if (signed?.error) throw new Error(signed?.error?.message);
+
+        setSession(signed?.data?.session);
+        setUser(signed?.data?.user);
+
+        toast.success(t('FormMessage.you_have_successfully_logged_in'));
+
+        router.refresh();
+        router.replace(next);
+      } catch (e: unknown) {
+        const err = (e as Error)?.message;
+        if (err.startsWith('Invalid login credentials')) {
+          toast.error(t('FormMessage.invalid_login_credentials'));
+        } else {
+          toast.error(err);
+        }
+      }
+    });
+  }
   return (
     <Form {...form}>
-      <form method="POST" noValidate className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        ref={ref}
+        method="POST"
+        noValidate
+        className="space-y-4"
+      >
         <EmailField />
         <PasswordField />
-        <SubmitButton />
+        {process.env.NEXT_PUBLIC_ENV !== 'dev' && (
+          <HCaptcha
+            sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
+            onVerify={onCaptchaChange}
+            ref={captchaRef}
+            onExpire={onCaptchaExpire}
+          />
+        )}
+
+        <Button type="submit" disabled={isSubmitting} className="w-full">
+          {t('FormSubmit.signin')}
+        </Button>
       </form>
     </Form>
   );
@@ -116,66 +179,6 @@ const PasswordField = () => {
         </FormItem>
       )}
     />
-  );
-};
-
-const SubmitButton = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const { t } = useTranslation();
-  const { handleSubmit, setError, getValues } = useFormContext();
-  const { setSession, setUser } = useAuth();
-
-  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-
-  const onSubmit = async () => {
-    try {
-      setIsSubmitting(true);
-
-      const next = (searchParams.get('next') as string) ?? '/account';
-      const formValues = getValues();
-
-      console.log(`formValues`, formValues);
-      const supabase = createClient();
-      const signed = await supabase.auth.signInWithPassword({
-        email: formValues?.email,
-        password: formValues?.password,
-      });
-      if (signed?.error) throw new Error(signed?.error?.message);
-
-      setSession(signed?.data?.session);
-      setUser(signed?.data?.user);
-
-      toast.success(t('FormMessage.you_have_successfully_logged_in'));
-
-      router.refresh();
-      router.replace(next);
-    } catch (e: unknown) {
-      const err = (e as Error)?.message;
-      if (err.startsWith('Invalid login credentials')) {
-        setError('email', {
-          message: t('FormMessage.invalid_login_credentials'),
-        });
-        setError('password', {
-          message: t('FormMessage.invalid_login_credentials'),
-        });
-      } else {
-        toast.error(err);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <Button
-      type="submit"
-      onClick={handleSubmit(onSubmit)}
-      disabled={isSubmitting}
-      className="w-full"
-    >
-      {t('FormSubmit.signin')}
-    </Button>
   );
 };
 

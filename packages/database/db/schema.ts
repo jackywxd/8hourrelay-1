@@ -1,9 +1,9 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { relations, sql } from "drizzle-orm";
+import { SQL, relations, sql } from 'drizzle-orm';
 import {
+  AnyPgColumn,
   boolean,
   index,
   integer,
@@ -11,14 +11,19 @@ import {
   numeric,
   pgEnum,
   pgTableCreator,
-  primaryKey,
   serial,
   timestamp,
   unique,
   uuid,
   varchar,
-} from "drizzle-orm/pg-core";
-import { z } from "zod";
+} from 'drizzle-orm/pg-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
+
+// custom lower function
+export function lower(col: AnyPgColumn): SQL {
+  return sql`lower(${col})`;
+}
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -26,56 +31,56 @@ import { z } from "zod";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-const stage = process.env.STAGE || "dev";
+const stage = process.env.STAGE || 'dev';
 
 export const createTable = pgTableCreator(
   (name) => `8hourrelay_${stage}_${name}`,
 );
 
 ///////////////////////////// ENUMS
-const roleEnum = ["admin", "captain", "member"] as const;
-export const UserRoleEnum = pgEnum("user_role", roleEnum);
+const roleEnum = ['admin', 'captain', 'member'] as const;
+export const UserRoleEnum = pgEnum('user_role', roleEnum);
 export type UserRole = (typeof roleEnum)[number];
 
-const genderEnum = ["Male", "Female"] as const;
-export const GenderTypeEnum = pgEnum("gender_type", genderEnum);
+const genderEnum = ['Male', 'Female'] as const;
+export const GenderTypeEnum = pgEnum('gender_type', genderEnum);
 export type GenderType = (typeof genderEnum)[number];
 
-const sizeEnum = ["S", "M", "L", "XL", "2XL", "3XL", "4XL"] as const;
-export const SizeTypeEnum = pgEnum("size_type", sizeEnum);
+const sizeEnum = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'] as const;
+export const SizeTypeEnum = pgEnum('size_type', sizeEnum);
 export type SizeType = (typeof sizeEnum)[number];
 
 ///////////////////////////// TABLES
-export const eventsTable = createTable("events", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 256 }).notNull(),
-  year: varchar("year", { length: 4 }).notNull().unique(),
-  location: varchar("location", { length: 1024 }).notNull(), // white rock
-  time: varchar("time", { length: 256 }).notNull(), //sep 7, 2024
-  registerDeadline: varchar("registerDeadline", { length: 256 }).notNull(),
-  description: varchar("description", { length: 2048 }),
-  isActive: boolean("isActive").notNull(),
-  createdAt: timestamp("createdAt")
+export const eventsTable = createTable('events', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 256 }).notNull(),
+  year: varchar('year', { length: 4 }).notNull().unique(),
+  location: varchar('location', { length: 1024 }).notNull(), // white rock
+  time: varchar('time', { length: 256 }).notNull(), //sep 7, 2024
+  registerDeadline: varchar('registerDeadline', { length: 256 }).notNull(),
+  description: varchar('description', { length: 2048 }),
+  isActive: boolean('isActive').notNull(),
+  createdAt: timestamp('createdAt')
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
 
 export const racesTable = createTable(
-  "races",
+  'races',
   {
-    id: serial("id").primaryKey(),
-    year: varchar("year", { length: 4 }).notNull(),
-    name: varchar("name", { length: 256 }).notNull(), // race name: adult or kids
-    isCompetitive: boolean("isCompetitive").notNull(), // is this race will calculate result
-    description: varchar("description", { length: 2048 }),
-    entryFee: integer("entryFee").notNull(),
-    lowerAge: integer("lowerAge"),
-    upperAge: integer("upperAge"),
-    maxTeamSize: integer("maxTeamSize"),
-    minFemale: integer("minFemale"),
-    lookupKey: varchar("lookupKey", { length: 256 }), // stripe price lookup_key
-    stripePrice: json("stripePrice"),
-    eventId: integer("eventId").references(() => eventsTable.id),
+    id: serial('id').primaryKey(),
+    year: varchar('year', { length: 4 }).notNull(),
+    name: varchar('name', { length: 256 }).notNull(), // race name: adult or kids
+    isCompetitive: boolean('isCompetitive').notNull(), // is this race will calculate result
+    description: varchar('description', { length: 2048 }),
+    entryFee: integer('entryFee').notNull(),
+    lowerAge: integer('lowerAge'),
+    upperAge: integer('upperAge'),
+    maxTeamSize: integer('maxTeamSize'),
+    minFemale: integer('minFemale'),
+    lookupKey: varchar('lookupKey', { length: 256 }), // stripe price lookup_key
+    stripePrice: json('stripePrice'),
+    eventId: integer('eventId').references(() => eventsTable.id),
   },
   (table) => ({
     uniqueYearName: unique(`${stage}_unique_year_name`).on(
@@ -86,41 +91,41 @@ export const racesTable = createTable(
 );
 
 export const teamsTable = createTable(
-  "teams",
+  'teams',
   {
-    id: serial("id").primaryKey(),
-    year: varchar("year", { length: 4 }).notNull(),
-    name: varchar("name", { length: 256 }).notNull(),
-    createdAt: timestamp("createdAt")
+    id: serial('id').primaryKey(),
+    year: varchar('year', { length: 4 }).notNull(),
+    name: varchar('name', { length: 256 }).notNull(),
+    createdAt: timestamp('createdAt')
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updatedAt")
+    updatedAt: timestamp('updatedAt')
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    slogan: varchar("slogan", { length: 1024 }),
-    photoUrl: varchar("photoUrl", { length: 1024 }),
-    password: varchar("password", { length: 256 }),
-    isOpen: boolean("isOpen").default(true),
-    state: varchar("state", { length: 10 }).default("PENDING"),
+    slogan: varchar('slogan', { length: 1024 }),
+    photoUrl: varchar('photoUrl', { length: 1024 }),
+    password: varchar('password', { length: 256 }),
+    isOpen: boolean('isOpen').default(true),
+    state: varchar('state', { length: 10 }).default('PENDING'),
 
     // captain of the team
-    captainId: integer("captainId").references(() => usersTable.id),
+    captainId: integer('captainId').references(() => usersTable.id),
 
     // owner of the team
-    userId: integer("userId")
+    userId: integer('userId')
       .notNull()
       .references(() => usersTable.id),
-    raceId: integer("raceId")
+    raceId: integer('raceId')
       .notNull()
       .references(() => racesTable.id),
 
     // payment session Id, it cloud be null when payment is not needed
-    sessionId: varchar("sessionId", { length: 256 }).references(
+    sessionId: varchar('sessionId', { length: 256 }).references(
       () => sessionsTable.sessionId,
     ),
   },
   (table) => ({
-    teamNameIndex: index("name_index").on(table.name),
+    teamNameIndex: index('name_index').on(table.name),
     // each yearn the team name should be unique
     uniqueYearTeamName: unique(`${stage}_unique_year_team_name`).on(
       table.year,
@@ -134,167 +139,167 @@ export const teamsTable = createTable(
   }),
 );
 
-export const raceEntriesToTeamsTable = createTable("race_entries_to_teams", {
-  id: serial("id").primaryKey(),
-  teamId: integer("teamId")
+export const raceEntriesToTeamsTable = createTable('race_entries_to_teams', {
+  id: serial('id').primaryKey(),
+  teamId: integer('teamId')
     .notNull()
-    .references(() => teamsTable.id, { onDelete: "cascade" }),
-  raceEntryId: integer("raceEntryId")
+    .references(() => teamsTable.id, { onDelete: 'cascade' }),
+  raceEntryId: integer('raceEntryId')
     .notNull()
     .references(() => raceEntriesTable.id),
-  userId: integer("userId")
+  userId: integer('userId')
     .notNull()
     .references(() => usersTable.id),
-  bib: varchar("bib", { length: 256 }),
-  raceOrder: integer("raceOrder"), // the sequence in the team
-  raceDuration: integer("raceDuration"), // run period in minutes
-  raceActualDistance: numeric("raceActualDistance"), // run distance in meters this is the result
-  raceAdjustedDistance: numeric("raceAdjustedDistance"), // run distance in meters this is the result
-  raceCoefficient: numeric("raceCoefficient"), // coefficient based on the age
-  raceStartTime: varchar("raceStartTime"),
-  raceEndTime: varchar("raceEndTime"),
+  bib: varchar('bib', { length: 256 }),
+  raceOrder: integer('raceOrder'), // the sequence in the team
+  raceDuration: integer('raceDuration'), // run period in minutes
+  raceActualDistance: numeric('raceActualDistance'), // run distance in meters this is the result
+  raceAdjustedDistance: numeric('raceAdjustedDistance'), // run distance in meters this is the result
+  raceCoefficient: numeric('raceCoefficient'), // coefficient based on the age
+  raceStartTime: varchar('raceStartTime'),
+  raceEndTime: varchar('raceEndTime'),
 });
 
 export const usersTable = createTable(
-  "users",
+  'users',
   {
-    id: serial("id").primaryKey(),
-    email: varchar("email", { length: 1024 }),
-    uid: uuid("uid").notNull().unique(),
-    createdAt: timestamp("createdAt")
+    id: serial('id').primaryKey(),
+    email: varchar('email', { length: 1024 }),
+    uid: uuid('uid').notNull().unique(),
+    createdAt: timestamp('createdAt')
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updatedAt")
+    updatedAt: timestamp('updatedAt')
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    firstName: varchar("firstName", { length: 256 }),
-    lastName: varchar("lastName", { length: 256 }),
-    preferName: varchar("preferName", { length: 256 }),
-    gender: varchar("gender", { length: 10 }),
-    wechatId: varchar("wechatId", { length: 256 }),
-    birthYear: varchar("birthYear", { length: 16 }),
-    personalBest: varchar("personalBest", { length: 256 }),
-    avatarUrl: varchar("avatarUrl", { length: 1024 }),
-    customerId: varchar("customerId", { length: 256 }), // stripe customer id
-    phone: varchar("phone", { length: 16 }),
-    address: varchar("address", { length: 1024 }),
+    firstName: varchar('firstName', { length: 256 }),
+    lastName: varchar('lastName', { length: 256 }),
+    preferName: varchar('preferName', { length: 256 }),
+    gender: varchar('gender', { length: 10 }),
+    wechatId: varchar('wechatId', { length: 256 }),
+    birthYear: varchar('birthYear', { length: 16 }),
+    personalBest: varchar('personalBest', { length: 256 }),
+    avatarUrl: varchar('avatarUrl', { length: 1024 }),
+    customerId: varchar('customerId', { length: 256 }), // stripe customer id
+    phone: varchar('phone', { length: 16 }),
+    address: varchar('address', { length: 1024 }),
   },
   (table) => {
     return {
-      uidIndex: index("uid_index").on(table.uid),
-      emailIndex: index("email_index").on(table.email),
+      uidIndex: index('uid_index').on(table.uid),
+      emailIndex: index('email_index').on(table.email),
     };
   },
 );
 
-export const emailInvitationsTable = createTable("emailInvitations", {
-  id: serial("id").primaryKey(),
-  email: varchar("email", { length: 1024 }).notNull().unique(),
-  gender: GenderTypeEnum("gender").notNull(),
-  createdAt: timestamp("createdAt")
+export const emailInvitationsTable = createTable('emailInvitations', {
+  id: serial('id').primaryKey(),
+  email: varchar('email', { length: 1024 }).notNull().unique(),
+  gender: GenderTypeEnum('gender').notNull(),
+  createdAt: timestamp('createdAt')
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   // user who send the invitation
-  userId: integer("userId").references(() => usersTable.id),
-  teamId: integer("teamId").references(() => teamsTable.id),
+  userId: integer('userId').references(() => usersTable.id),
+  teamId: integer('teamId').references(() => teamsTable.id),
 });
 
-export const raceEntriesTable = createTable("raceEntries", {
-  id: serial("id").primaryKey(),
-  firstName: varchar("firstName", { length: 256 }).notNull(),
-  lastName: varchar("lastName", { length: 256 }).notNull(),
-  preferName: varchar("preferName", { length: 256 }),
-  birthYear: varchar("birthYear", { length: 4 }).notNull(),
-  personalBest: varchar("personalBest", { length: 256 }),
-  gender: GenderTypeEnum("gender").notNull(),
-  email: varchar("email", { length: 1024 }).notNull(),
-  phone: varchar("phone", { length: 15 }).notNull(),
-  year: varchar("year", { length: 4 }).notNull(),
-  wechatId: varchar("wechatId", { length: 256 }),
-  isActive: boolean("isActive").default(true).notNull(),
-  isForOther: boolean("isForOther").default(false).notNull(),
-  size: SizeTypeEnum("size").notNull(),
-  emergencyName: varchar("emergencyName", { length: 256 }).notNull(),
-  emergencyPhone: varchar("emergencyPhone", { length: 15 }).notNull(),
-  medicalInfo: varchar("medicalInfo", { length: 2048 }),
-  teamPassword: varchar("teamPassword", { length: 256 }),
-  emailConsent: boolean("emailConsent").default(false).notNull(),
-  smsOptIn: boolean("smsOptIn").default(false).notNull(),
-  accepted: boolean("accepted").default(false).notNull(),
-  createdAt: timestamp("createdAt")
+export const raceEntriesTable = createTable('raceEntries', {
+  id: serial('id').primaryKey(),
+  firstName: varchar('firstName', { length: 256 }).notNull(),
+  lastName: varchar('lastName', { length: 256 }).notNull(),
+  preferName: varchar('preferName', { length: 256 }),
+  birthYear: varchar('birthYear', { length: 4 }).notNull(),
+  personalBest: varchar('personalBest', { length: 256 }),
+  gender: GenderTypeEnum('gender').notNull(),
+  email: varchar('email', { length: 1024 }).notNull(),
+  phone: varchar('phone', { length: 15 }).notNull(),
+  year: varchar('year', { length: 4 }).notNull(),
+  wechatId: varchar('wechatId', { length: 256 }),
+  isActive: boolean('isActive').default(true).notNull(),
+  isForOther: boolean('isForOther').default(false).notNull(),
+  size: SizeTypeEnum('size').notNull(),
+  emergencyName: varchar('emergencyName', { length: 256 }).notNull(),
+  emergencyPhone: varchar('emergencyPhone', { length: 15 }).notNull(),
+  medicalInfo: varchar('medicalInfo', { length: 2048 }),
+  teamPassword: varchar('teamPassword', { length: 256 }),
+  emailConsent: boolean('emailConsent').default(false).notNull(),
+  smsOptIn: boolean('smsOptIn').default(false).notNull(),
+  accepted: boolean('accepted').default(false).notNull(),
+  createdAt: timestamp('createdAt')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updatedAt")
+  updatedAt: timestamp('updatedAt')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 
-  userId: integer("userId")
+  userId: integer('userId')
     .notNull()
     .references(() => usersTable.id),
-  sessionId: varchar("sessionId", { length: 256 })
+  sessionId: varchar('sessionId', { length: 256 })
     .notNull()
     .references(() => sessionsTable.sessionId),
 
   // it could be null when there is no promo code
-  promoCodeId: integer("promoCodeId").references(() => promoCodesTable.id),
+  promoCodeId: integer('promoCodeId').references(() => promoCodesTable.id),
 });
 
-export const sessionsTable = createTable("stripeSessions", {
-  sessionId: varchar("sessionId", { length: 256 }).primaryKey(),
-  priceId: varchar("priceId", { length: 256 }).notNull(), // stripe price id
-  quantity: integer("quantity").notNull().default(1), // quantity of priceId
-  productId: varchar("productId", { length: 256 }).notNull(), // stripe product id
-  paymentIntentId: varchar("paymentIntentId"), // stripe payment intent id, it could be null when payment is not completed
-  status: varchar("status", { length: 256 }).notNull(), // stripe session status
-  paymentStatus: varchar("paymentStatus", { length: 256 }).notNull(), // stripe payment status
-  payload: json("payload"), // stripe checkout session object
-  createdAt: timestamp("createdAt")
+export const sessionsTable = createTable('stripeSessions', {
+  sessionId: varchar('sessionId', { length: 256 }).primaryKey(),
+  priceId: varchar('priceId', { length: 256 }).notNull(), // stripe price id
+  quantity: integer('quantity').notNull().default(1), // quantity of priceId
+  productId: varchar('productId', { length: 256 }).notNull(), // stripe product id
+  paymentIntentId: varchar('paymentIntentId'), // stripe payment intent id, it could be null when payment is not completed
+  status: varchar('status', { length: 256 }).notNull(), // stripe session status
+  paymentStatus: varchar('paymentStatus', { length: 256 }).notNull(), // stripe payment status
+  payload: json('payload'), // stripe checkout session object
+  createdAt: timestamp('createdAt')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updatedAt")
+  updatedAt: timestamp('updatedAt')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  expiresAt: timestamp("expiresAt").notNull(),
-  amount: integer("amount").notNull(),
-  currency: varchar("currency", { length: 10 }).notNull(),
-  receiptNumber: varchar("receiptNumber", { length: 256 }),
-  receiptUrl: varchar("receiptUrl", { length: 1024 }),
+  expiresAt: timestamp('expiresAt').notNull(),
+  amount: integer('amount').notNull(),
+  currency: varchar('currency', { length: 10 }).notNull(),
+  receiptNumber: varchar('receiptNumber', { length: 256 }),
+  receiptUrl: varchar('receiptUrl', { length: 1024 }),
 });
 
-export const paymentStatusTable = createTable("paymentStatus", {
-  id: serial("id").primaryKey(),
-  sessionId: varchar("sessionId", { length: 256 }).references(
+export const paymentStatusTable = createTable('paymentStatus', {
+  id: serial('id').primaryKey(),
+  sessionId: varchar('sessionId', { length: 256 }).references(
     () => sessionsTable.sessionId,
   ),
-  userId: integer("userId")
+  userId: integer('userId')
     .notNull()
     .references(() => usersTable.id),
 
-  teamId: integer("teamId").references(() => teamsTable.id, {
-    onDelete: "cascade",
+  teamId: integer('teamId').references(() => teamsTable.id, {
+    onDelete: 'cascade',
   }),
-  raceEntryId: integer("raceEntryId").references(() => raceEntriesTable.id, {
-    onDelete: "cascade",
+  raceEntryId: integer('raceEntryId').references(() => raceEntriesTable.id, {
+    onDelete: 'cascade',
   }),
 });
 
-export const promoCodesTable = createTable("promoCodes", {
-  id: serial("id").primaryKey(),
-  code: varchar("code", { length: 256 }).notNull().unique(),
-  discount: integer("discount").notNull(),
-  expiresAt: timestamp("expiresAt").notNull(),
-  maxUsage: integer("maxUsage").notNull(),
-  isActive: boolean("isActive").notNull().default(true), // whether this promo code is active
-  apiId: varchar("apiId", { length: 256 }), // stripe coupon promo code api id
+export const promoCodesTable = createTable('promoCodes', {
+  id: serial('id').primaryKey(),
+  code: varchar('code', { length: 256 }).notNull().unique(),
+  discount: integer('discount').notNull(),
+  expiresAt: timestamp('expiresAt').notNull(),
+  maxUsage: integer('maxUsage').notNull(),
+  isActive: boolean('isActive').notNull().default(true), // whether this promo code is active
+  apiId: varchar('apiId', { length: 256 }), // stripe coupon promo code api id
 });
 
-export const messagesTable = createTable("messages", {
-  id: serial("id").primaryKey(),
-  email: varchar("email", { length: 1024 }).notNull(),
-  name: varchar("name", { length: 256 }).notNull(),
-  message: varchar("message", { length: 1024 }).notNull(),
-  response: json("response"),
-  createdAt: timestamp("createdAt")
+export const messagesTable = createTable('messages', {
+  id: serial('id').primaryKey(),
+  email: varchar('email', { length: 1024 }).notNull(),
+  name: varchar('name', { length: 256 }).notNull(),
+  message: varchar('message', { length: 1024 }).notNull(),
+  response: json('response'),
+  createdAt: timestamp('createdAt')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
 });
@@ -321,7 +326,7 @@ export const teamsRelations = relations(teamsTable, ({ one, many }) => ({
   user: one(usersTable, {
     fields: [teamsTable.userId],
     references: [usersTable.id],
-    relationName: "owner",
+    relationName: 'owner',
   }),
   session: one(sessionsTable, {
     fields: [teamsTable.sessionId],
@@ -330,7 +335,7 @@ export const teamsRelations = relations(teamsTable, ({ one, many }) => ({
   captain: one(usersTable, {
     fields: [teamsTable.captainId],
     references: [usersTable.id],
-    relationName: "captain",
+    relationName: 'captain',
   }),
   raceEntriesToTeams: many(raceEntriesToTeamsTable),
   payments: many(paymentStatusTable),
@@ -340,8 +345,8 @@ export const usersRelations = relations(usersTable, ({ many }) => ({
   raceEntries: many(raceEntriesTable),
   emailInvitations: many(emailInvitationsTable),
   raceEntriesToTeams: many(raceEntriesToTeamsTable),
-  teams: many(teamsTable, { relationName: "owner" }),
-  captains: many(teamsTable, { relationName: "captain" }),
+  teams: many(teamsTable, { relationName: 'owner' }),
+  captains: many(teamsTable, { relationName: 'captain' }),
   payments: many(paymentStatusTable),
 }));
 

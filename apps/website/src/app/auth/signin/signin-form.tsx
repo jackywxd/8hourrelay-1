@@ -38,8 +38,6 @@ const defaultValues: Partial<FormValues> = {
 };
 
 const SignInForm = () => {
-  const ref = React.useRef<HTMLFormElement>(null);
-
   const captchaRef = React.useRef<HCaptcha | null>(null);
   const [captchaToken, setCaptchaToken] = React.useState<string | null>(null);
   const { setSession, setUser } = useAuth();
@@ -94,7 +92,6 @@ const SignInForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        ref={ref}
         method="POST"
         noValidate
         className="space-y-4"

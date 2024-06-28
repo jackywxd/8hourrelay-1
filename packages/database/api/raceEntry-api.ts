@@ -1,6 +1,6 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, count, eq, sql } from "drizzle-orm";
+import { and, asc, count, eq, sql } from 'drizzle-orm';
 
 import {
   db,
@@ -16,8 +16,8 @@ import {
   sessionsTable,
   updateRaceEntrySchema,
   updateRaceEntryToTeamsSchema,
-} from "../db";
-import { getTotalTeamsMembersById } from "./team-api";
+} from '../db';
+import { getTotalTeamsMembersById } from './team-api';
 
 export const createPaidRaceEntry = async (
   data: NewRaceEntry,
@@ -42,14 +42,15 @@ export const createPaidRaceEntry = async (
       .values(validatedData)
       .returning({ id: raceEntriesTable.id });
 
-    const totalTeamMembers = await db.select({ count: count() }).from(
-      raceEntriesToTeamsTable,
-    ).where(eq(raceEntriesToTeamsTable.teamId, teamId));
+    const totalTeamMembers = await db
+      .select({ count: count() })
+      .from(raceEntriesToTeamsTable)
+      .where(eq(raceEntriesToTeamsTable.teamId, teamId));
     const validatedRaceEntryToTeamsData = insertRaceEntryToTeamsSchema.parse({
       raceEntryId: result[0].id,
       teamId: teamId,
       userId: data.userId,
-      raceDuration: 20, // default to 20 minutes
+      raceDuration: 40, // default to 20 minutes
       raceOrder: totalTeamMembers[0]?.count
         ? +totalTeamMembers[0].count + 1
         : 1,
@@ -83,9 +84,10 @@ export const createOpenRaceEntry = async (
       .values(validatedData)
       .returning({ id: raceEntriesTable.id });
 
-    const totalTeamMembers = await db.select({ count: count() }).from(
-      raceEntriesToTeamsTable,
-    ).where(eq(raceEntriesToTeamsTable.teamId, teamId));
+    const totalTeamMembers = await db
+      .select({ count: count() })
+      .from(raceEntriesToTeamsTable)
+      .where(eq(raceEntriesToTeamsTable.teamId, teamId));
     const validatedRaceEntryToTeamsData = insertRaceEntryToTeamsSchema.parse({
       raceEntryId: result[0].id,
       teamId: teamId,
@@ -146,7 +148,7 @@ export type UserAllRaceEntries = Awaited<
 >;
 
 export const updateRaceEntryOrder = async (
-  rosters: Pick<Roster, "id" | "raceOrder">[],
+  rosters: Pick<Roster, 'id' | 'raceOrder'>[],
 ) => {
   await db.transaction(async (tx) => {
     for (const { id, raceOrder: order } of rosters) {
@@ -258,6 +260,4 @@ export const getRaceEntryById = async (id: number, userId: number) => {
   return { ...result, team: result?.raceEntriesToTeams[0]?.team };
 };
 
-export type RaceEntryById = Awaited<
-  ReturnType<typeof getRaceEntryById>
->;
+export type RaceEntryById = Awaited<ReturnType<typeof getRaceEntryById>>;

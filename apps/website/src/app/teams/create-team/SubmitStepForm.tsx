@@ -1,5 +1,3 @@
-'use client';
-
 import { usePostHog } from 'posthog-js/react';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
@@ -25,8 +23,11 @@ export default function SubmitStepForm({
   team,
   onNext,
 }: {
-  selectedRace: Race;
-  team: NewTeam;
+  selectedRace: Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>;
+  team: Pick<
+    NewTeam,
+    'name' | 'password' | 'slogan' | 'isOpen' | 'year' | 'createdAt'
+  >;
   onNext: (session: string) => void;
 }) {
   const [isPending, startTransition] = useTransition();

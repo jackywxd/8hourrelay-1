@@ -69,14 +69,16 @@ export function DataTableToolbar<TData>({
             </Button>
           </div>
         )}
-        <CSVLink
-          data={data as Data}
-          filename={'my-file.csv'}
-          className="flex items-center text-sm"
-          target="_blank"
-        >
-          <span>Export</span>
-        </CSVLink>
+        {data?.length > 0 && (
+          <CSVLink
+            data={data as Data}
+            filename={'my-file.csv'}
+            className="flex items-center text-sm"
+            target="_blank"
+          >
+            <span>Export</span>
+          </CSVLink>
+        )}
       </div>
     </div>
   );

@@ -176,6 +176,8 @@ export const getAllTeams = async () => {
           id: true,
           name: true,
           isCompetitive: true,
+          lowerAge: true,
+          upperAge: true,
         },
       },
       captain: {

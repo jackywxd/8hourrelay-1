@@ -64,7 +64,7 @@ const MyTeamPage = async () => {
         <EditTeamSettings team={team} />
       </DashboardHeader>
 
-      <div className="flex gap-10">
+      <div className="w-full">
         <Suspense fallback={<FormSkeleton items={5} />}>
           <RaceEntries team={team} />
         </Suspense>

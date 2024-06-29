@@ -29,7 +29,6 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 
-import { ColumnResizer } from './column-resizer';
 import { DataTableToolbar } from './toolbar';
 
 declare module '@tanstack/react-table' {
@@ -159,7 +158,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="rounded-md border">
         <form>
-          <Table style={{ width: table.getTotalSize() }}>
+          <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -179,7 +178,7 @@ export function DataTable<TData, TValue>({
                               header.column.columnDef.header,
                               header.getContext()
                             )}
-                        <ColumnResizer header={header} />
+                        {/* <ColumnResizer header={header} /> */}
                       </TableHead>
                     );
                   })}

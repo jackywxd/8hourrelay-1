@@ -52,7 +52,7 @@ export const createPaidRaceEntry = async (
       raceEntryId: result[0].id,
       teamId: teamId,
       userId: data.userId,
-      raceDuration: 40, // default to 20 minutes
+      raceDuration: 20, // default to 20 minutes
       raceOrder: totalTeamMembers[0]?.count
         ? +totalTeamMembers[0].count + 1
         : 1,
@@ -94,7 +94,7 @@ export const createOpenRaceEntry = async (
       raceEntryId: result[0].id,
       teamId: teamId,
       userId: data.userId,
-      raceDuration: 20, // default to 20 minutes
+      raceDuration: 40, // default to 20 minutes
       raceOrder: totalTeamMembers[0]?.count
         ? +totalTeamMembers[0].count + 1
         : 1,

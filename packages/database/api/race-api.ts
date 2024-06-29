@@ -63,6 +63,8 @@ export const getAllRaces = async () => {
   });
 };
 
+export type AllRaces = Awaited<ReturnType<typeof getAllRaces>>;
+
 // retrieve race by lookup key from the database
 // this function will return null if the race is not found
 // return with password

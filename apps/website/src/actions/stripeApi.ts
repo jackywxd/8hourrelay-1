@@ -1,18 +1,21 @@
-"use server";
+'use server';
 
-import "server-only";
-import Stripe from "stripe";
-import { db, Race, User, usersTable } from "@8hourrelay/database";
-import { eq } from "drizzle-orm";
+import { db, Race, User, usersTable } from '@8hourrelay/database';
+import { eq } from 'drizzle-orm';
+import 'server-only';
+import Stripe from 'stripe';
 
 const apiKey = process.env.STRIPE_SECRET;
 
 const stripe = new Stripe(apiKey!, {
-  apiVersion: "2024-04-10",
+  apiVersion: '2024-04-10',
   typescript: true,
 });
 
-export const createStripeSession = async (user: User, race: Race) => {
+export const createStripeSession = async (
+  user: User,
+  race: Pick<Race, 'isCompetitive' | 'stripePrice'>
+) => {
   const email = user.email;
 
   if (!email) {
@@ -49,11 +52,11 @@ export const createStripeSession = async (user: User, race: Race) => {
 export const newStripeSession = async (
   customerId: string,
   priceId: string,
-  quantity: number,
+  quantity: number
 ) => {
   const sessionCreateParams: Stripe.Checkout.SessionCreateParams = {
     customer: customerId,
-    mode: "payment",
+    mode: 'payment',
     line_items: [
       {
         price: priceId,
@@ -61,8 +64,7 @@ export const newStripeSession = async (
       },
     ],
     allow_promotion_codes: true,
-    success_url:
-      `${process.env.NEXT_PUBLIC_SITE_URL}/payment?success=true&session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment?success=true&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment?canceled=true`,
   };
 

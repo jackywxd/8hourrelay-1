@@ -1,37 +1,39 @@
-'use client';
-
 import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { Form } from '@/components/ui/form';
 
-import { Radio, RadioGroup } from '@headlessui/react';
 import { useStepper } from '@/components/ui/stepper';
-import { Race } from '@8hourrelay/database';
+import { AllRaces, Race } from '@8hourrelay/database';
+import { Radio, RadioGroup } from '@headlessui/react';
 import { CircleCheck } from 'lucide-react';
 
+import Stripe from 'stripe';
 import StepperFormActions from './StepFormActions';
-import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
-
-const FormSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
-});
-type FormSchemaType = z.infer<typeof FormSchema>;
 
 export default function SelectRaceStep({
   races,
   selectedRace,
   onNext,
 }: {
-  races: Race<'teams'>[];
-  selectedRace: Race<'teams'>;
-  onNext: (race: Race<'teams'>) => void;
+  races: AllRaces;
+  selectedRace: Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>;
+  onNext: (
+    race: Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>
+  ) => void;
 }) {
-  const [selected, setSelected] = useState<Race>(selectedRace || races[0]);
+  const [selected, setSelected] = useState<
+    Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>
+  >(() => {
+    if (selectedRace) return selectedRace;
+    const { teams, ...race } = races[0];
+    return {
+      id: race.id,
+      isCompetitive: race.isCompetitive,
+      entryFee: race.entryFee,
+      stripePrice: race.stripePrice as unknown as Stripe.Price,
+    };
+  });
   const { nextStep } = useStepper();
   const form = useForm();
   function onSubmit() {
@@ -45,7 +47,6 @@ export default function SelectRaceStep({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="">
           <RadioGroup
-            by="description"
             value={selected}
             onChange={setSelected}
             aria-label="Race category"

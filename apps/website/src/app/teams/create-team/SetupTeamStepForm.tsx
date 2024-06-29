@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { queryTeamName } from '@/actions/teamActions';
-import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -24,8 +23,16 @@ export default function SetupTeamForm({
   team,
   setTeam,
 }: {
-  team: NewTeam;
-  setTeam: (team: NewTeam) => void;
+  team: Pick<
+    NewTeam,
+    'name' | 'password' | 'slogan' | 'isOpen' | 'year' | 'createdAt'
+  >;
+  setTeam: (
+    team: Pick<
+      NewTeam,
+      'name' | 'password' | 'slogan' | 'isOpen' | 'year' | 'createdAt'
+    >
+  ) => void;
 }) {
   const { nextStep } = useStepper();
 
@@ -123,20 +130,6 @@ export default function SetupTeamForm({
           <StepperFormActions />
         </form>
       </Form>
-    </div>
-  );
-}
-
-function MyStepperFooter() {
-  const { activeStep, resetSteps, steps } = useStepper();
-
-  if (activeStep !== steps.length) {
-    return null;
-  }
-
-  return (
-    <div className="flex items-center justify-end gap-2">
-      <Button onClick={resetSteps}>Reset Stepper with Form</Button>
     </div>
   );
 }

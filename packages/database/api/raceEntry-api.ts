@@ -227,7 +227,11 @@ export const getRaceEntryRosterById = async (id: number) => {
     where: eq(raceEntriesToTeamsTable.id, id),
     with: {
       raceEntry: true,
-      team: true,
+      team: {
+        with: {
+          race: true,
+        },
+      },
     },
   });
   return result;

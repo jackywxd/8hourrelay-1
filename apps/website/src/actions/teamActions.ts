@@ -68,7 +68,10 @@ export const queryTeamByOwner = cache(async () => {
   }
 });
 
-export const createNewTeam = async (data: NewTeam, selectedRace: Race) => {
+export const createNewTeam = async (
+  data: NewTeam,
+  selectedRace: Pick<Race, 'id' | 'isCompetitive' | 'stripePrice'>
+) => {
   try {
     const user = await getCurrentUser();
     if (!user) throw new Error('User not found');

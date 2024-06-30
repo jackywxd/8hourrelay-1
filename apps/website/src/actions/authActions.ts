@@ -1,6 +1,7 @@
 'use server';
+import 'server-only';
 
-import { createClient } from '@/supabase/server';
+import { createClient } from '@/supabase/client';
 
 export const login = async (form: {
   /** The user's email address. */

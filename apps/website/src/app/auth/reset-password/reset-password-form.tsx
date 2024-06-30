@@ -38,7 +38,7 @@ const defaultValues: Partial<FormValues> = {
   confirmNewPassword: '',
 };
 
-const ResetPasswordForm = () => {
+const ResetPasswordForm = ({ token_hash }: { token_hash: string }) => {
   const [isSubmitting, startTransition] = React.useTransition();
   const { setSession, setUser } = useAuth();
   const { t } = useTranslation();
@@ -53,7 +53,7 @@ const ResetPasswordForm = () => {
   function onSubmit(formValues: FormValues) {
     startTransition(async () => {
       try {
-        await changePassword(formValues.newPassword);
+        await changePassword(token_hash, formValues.newPassword);
 
         setSession(null);
         setUser(null);

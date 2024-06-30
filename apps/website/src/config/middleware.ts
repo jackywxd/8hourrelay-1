@@ -21,14 +21,19 @@ export const accessDenied: MiddlewareAccessDenied[] = [
     authenticated: false,
   },
   {
-    from: '/auth/reset-password',
+    from: '/api/v1',
     to: '/auth',
     authenticated: false,
   },
   {
-    from: '/api/v1',
-    to: '/auth',
-    authenticated: false,
+    from: '/auth/reset-password',
+    to: '/',
+    authenticated: true,
+  },
+  {
+    from: '/auth/forgot-password',
+    to: '/',
+    authenticated: true,
   },
   {
     from: '/auth/signin',

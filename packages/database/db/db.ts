@@ -10,8 +10,6 @@ import * as schema from './schema';
 // Use this object to send drizzle queries to your DB
 // export const db = drizzle(sql, { schema });
 
-import 'dotenv/config';
-
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 

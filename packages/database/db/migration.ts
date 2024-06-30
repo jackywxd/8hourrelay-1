@@ -1,13 +1,7 @@
-import * as fs from 'fs';
-import dotenv from 'dotenv';
 import { parseFile } from '@fast-csv/parse';
-import {
-  insertEventSchema,
-  selectUserSchema,
-  insertUserSchema,
-  usersTable,
-} from './schema';
-import { NewUser, db } from './db';
+import dotenv from 'dotenv';
+import { db } from './db';
+import { insertEventSchema, insertUserSchema, usersTable } from './schema';
 
 dotenv.config();
 

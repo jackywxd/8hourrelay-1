@@ -24,36 +24,23 @@ import { Input } from '@/components/ui/input';
 import { useStepper } from '@/components/ui/stepper';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-const raceFormSchema = z
-  .object({
-    emergencyName: z
-      .string()
-      .min(1, { message: 'Emergency contact name is required' }),
-    emergencyPhone: z
-      .string()
-      .min(1, { message: 'Phone number is required' })
-      .regex(
-        // verify is a valid phone number
-        new RegExp(
-          `^\\+?\\d{1,4}?[-.\\s]?\\(?\\d{1,3}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$`
-        ),
-        {
-          message: 'Enter a valid phone number',
-        }
+const raceFormSchema = z.object({
+  emergencyName: z
+    .string()
+    .min(1, { message: 'Emergency contact name is required' }),
+  emergencyPhone: z
+    .string()
+    .min(1, { message: 'Phone number is required' })
+    .regex(
+      // verify is a valid phone number
+      new RegExp(
+        `^\\+?\\d{1,4}?[-.\\s]?\\(?\\d{1,3}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$`
       ),
-  })
-  .passthrough()
-  .superRefine((arg, ctx) => {
-    const errors = registerStore.validateForm(arg);
-    if (errors.emergencyPhone) {
-      ctx.addIssue({
-        path: ['emergencyPhone'],
-        code: z.ZodIssueCode.custom,
-        message: errors.phone,
-      });
-    }
-    return z.NEVER;
-  });
+      {
+        message: 'Enter a valid phone number',
+      }
+    ),
+});
 
 type RaceFormValues = z.infer<typeof raceFormSchema>;
 

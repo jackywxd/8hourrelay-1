@@ -1,12 +1,14 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, count, eq, sql } from "drizzle-orm";
+import { and, asc, count, eq, sql } from 'drizzle-orm';
 
 import {
   db,
+  GenderType,
   insertRaceEntrySchema,
   insertRaceEntryToTeamsSchema,
   insertSessionSchema,
+  lower,
   NewRaceEntry,
   NewSession,
   paymentStatusTable,
@@ -16,8 +18,8 @@ import {
   sessionsTable,
   updateRaceEntrySchema,
   updateRaceEntryToTeamsSchema,
-} from "../db";
-import { getTotalTeamsMembersById } from "./team-api";
+} from '../db';
+import { getTotalTeamsMembersById } from './team-api';
 
 export const createPaidRaceEntry = async (
   data: NewRaceEntry,
@@ -42,9 +44,10 @@ export const createPaidRaceEntry = async (
       .values(validatedData)
       .returning({ id: raceEntriesTable.id });
 
-    const totalTeamMembers = await db.select({ count: count() }).from(
-      raceEntriesToTeamsTable,
-    ).where(eq(raceEntriesToTeamsTable.teamId, teamId));
+    const totalTeamMembers = await db
+      .select({ count: count() })
+      .from(raceEntriesToTeamsTable)
+      .where(eq(raceEntriesToTeamsTable.teamId, teamId));
     const validatedRaceEntryToTeamsData = insertRaceEntryToTeamsSchema.parse({
       raceEntryId: result[0].id,
       teamId: teamId,
@@ -83,14 +86,15 @@ export const createOpenRaceEntry = async (
       .values(validatedData)
       .returning({ id: raceEntriesTable.id });
 
-    const totalTeamMembers = await db.select({ count: count() }).from(
-      raceEntriesToTeamsTable,
-    ).where(eq(raceEntriesToTeamsTable.teamId, teamId));
+    const totalTeamMembers = await db
+      .select({ count: count() })
+      .from(raceEntriesToTeamsTable)
+      .where(eq(raceEntriesToTeamsTable.teamId, teamId));
     const validatedRaceEntryToTeamsData = insertRaceEntryToTeamsSchema.parse({
       raceEntryId: result[0].id,
       teamId: teamId,
       userId: data.userId,
-      raceDuration: 20, // default to 20 minutes
+      raceDuration: 40, // default to 20 minutes
       raceOrder: totalTeamMembers[0]?.count
         ? +totalTeamMembers[0].count + 1
         : 1,
@@ -146,7 +150,7 @@ export type UserAllRaceEntries = Awaited<
 >;
 
 export const updateRaceEntryOrder = async (
-  rosters: Pick<Roster, "id" | "raceOrder">[],
+  rosters: Pick<Roster, 'id' | 'raceOrder'>[],
 ) => {
   await db.transaction(async (tx) => {
     for (const { id, raceOrder: order } of rosters) {
@@ -223,7 +227,11 @@ export const getRaceEntryRosterById = async (id: number) => {
     where: eq(raceEntriesToTeamsTable.id, id),
     with: {
       raceEntry: true,
-      team: true,
+      team: {
+        with: {
+          race: true,
+        },
+      },
     },
   });
   return result;
@@ -258,6 +266,29 @@ export const getRaceEntryById = async (id: number, userId: number) => {
   return { ...result, team: result?.raceEntriesToTeams[0]?.team };
 };
 
-export type RaceEntryById = Awaited<
-  ReturnType<typeof getRaceEntryById>
->;
+export type RaceEntryById = Awaited<ReturnType<typeof getRaceEntryById>>;
+
+export const findDuplicateRaceEntry = async (data: {
+  firstName: string;
+  lastName: string;
+  birthYear: string;
+  gender: GenderType;
+  year?: string;
+}) => {
+  const { firstName, lastName, birthYear, gender } = data;
+  const year = data?.year ? data?.year : new Date().getFullYear().toString();
+  const result = await db
+    .select()
+    .from(raceEntriesTable)
+    .where(
+      and(
+        eq(lower(raceEntriesTable.firstName), firstName.toLowerCase()),
+        eq(lower(raceEntriesTable.lastName), lastName.toLowerCase()),
+        eq(raceEntriesTable.isActive, true),
+        eq(raceEntriesTable.birthYear, birthYear),
+        eq(raceEntriesTable.gender, gender),
+        eq(raceEntriesTable.year, year),
+      ),
+    );
+  return result.length > 0;
+};

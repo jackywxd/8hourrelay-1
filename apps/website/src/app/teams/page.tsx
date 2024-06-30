@@ -5,10 +5,10 @@ import DisplayTeams from './DisplayTeams';
 import './teams.css';
 import { EmptyPlaceholder } from '@/components/empty-placeholder';
 import { Button } from '@/components/ui/button';
-import { listTeams, getCurrentUser } from '@/actions';
+import { getCurrentUser } from '@/actions/userActions';
 import Loader from '@/components/Loading';
 import Navbar from '@/components/Navbar';
-import { Team } from '@8hourrelay/database';
+import { listTeams } from '@/actions/teamActions';
 
 // teams page is public page, not require login
 export default async function TeamsPage() {

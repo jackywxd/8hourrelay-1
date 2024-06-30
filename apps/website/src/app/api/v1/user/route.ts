@@ -1,16 +1,16 @@
-import dayjs from "dayjs";
-import { NextRequest, NextResponse, type } from "next/server";
+import dayjs from 'dayjs';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { ApiError, revalidatePaths, setMeta } from "@/lib/utils";
-import { authenticate, authorize, getAuth } from "@/queries/server/auth";
-import { getUserAPI } from "@/queries/server/users";
-import { createAdminClient, createClient } from "@/supabase/server";
-import { getUser } from "@8hourrelay/database";
+import { ApiError, revalidatePaths, setMeta } from '@/lib/utils';
+import { authorize } from '@/queries/server/auth';
+import { getUserAPI } from '@/queries/server/users';
+import { createAdminClient, createClient } from '@/supabase/server';
+import { getUser } from '@8hourrelay/database';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const id = searchParams.get("id") as string;
-  const username = searchParams.get("username") as string;
+  const id = searchParams.get('id') as string;
+  const username = searchParams.get('username') as string;
 
   let match = {};
 
@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json(
-      { data: null, error: "User not found" },
-      { status: 400 },
+      { data: null, error: 'User not found' },
+      { status: 400 }
     );
   }
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const id = searchParams.get("id") as string;
+  const id = searchParams.get('id') as string;
 
   const { data, options } = await request.json();
   const { authorized } = await authorize(id);
@@ -42,30 +42,30 @@ export async function POST(request: NextRequest) {
   if (!authorized || !user) {
     return NextResponse.json(
       { data: null, error: new ApiError(401) },
-      { status: 401 },
+      { status: 401 }
     );
   }
 
   if (data?.username && user?.username_changed_at) {
     const now = dayjs();
     const startDate = dayjs(user?.username_changed_at);
-    const endDate = startDate.add(1, "month");
+    const endDate = startDate.add(1, 'month');
     if (now < endDate) {
-      const diff = endDate.diff(now, "days");
+      const diff = endDate.diff(now, 'days');
       const error = `You can change it after ${diff} days.`;
       return NextResponse.json(
         { data: null, error: new ApiError(403, error) },
-        { status: 403 },
+        { status: 403 }
       );
     }
   }
 
   const supabase = createClient();
   const { data: updated, error } = await supabase
-    .from("users")
+    .from('users')
     .update(data)
-    .eq("id", id)
-    .select("*")
+    .eq('id', id)
+    .select('*')
     .single();
 
   if (error) {
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const id = searchParams.get("id") as string;
+  const id = searchParams.get('id') as string;
 
   const { options } = await request.json();
   const { authorized } = await authorize(id);
@@ -92,7 +92,7 @@ export async function DELETE(request: NextRequest) {
   if (!authorized) {
     return NextResponse.json(
       { data: null, error: new ApiError(401) },
-      { status: 401 },
+      { status: 401 }
     );
   }
 
@@ -106,7 +106,7 @@ export async function DELETE(request: NextRequest) {
     if (removed?.error) {
       return NextResponse.json(
         { data: null, error: removed?.error },
-        { status: 400 },
+        { status: 400 }
       );
     }
   }
@@ -117,7 +117,7 @@ export async function DELETE(request: NextRequest) {
   if (account?.error) {
     return NextResponse.json(
       { data: null, error: account?.error },
-      { status: 400 },
+      { status: 400 }
     );
   }
 

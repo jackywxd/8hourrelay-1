@@ -1,4 +1,4 @@
-import { getUserRaceEntryById } from '@/actions';
+import { getUserRaceEntryById } from '@/actions/raceEntryActions';
 import { DashboardHeader } from '@/components/header';
 import { DashboardShell } from '@/components/shell';
 import { FormSkeleton } from '@/components/FormSkeleton';

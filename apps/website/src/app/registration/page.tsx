@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { getCurrentUser, listRaces, queryTeamId } from '@/actions';
+import { queryTeamId } from '@/actions/teamActions';
+import { getCurrentUser, listRaces } from '@/actions/userActions';
 import { EmptyPlaceholder } from '@/components/empty-placeholder';
 import { FormSkeleton } from '@/components/FormSkeleton';
 import { DashboardHeader } from '@/components/header';
@@ -17,20 +18,19 @@ const CUT_OFF_DATE =
 // accept incoming action and target in the url
 // ops[0] = action (join, create, edit and etc)
 // ops[1] = target (team name, user id and etc)
-async function RegistrationPage({ searchParams }) {
+async function RegistrationPage({ searchParams }: any) {
   const action = searchParams.action;
   const teamId = searchParams.teamId;
-  const raceId = searchParams.raceId;
 
   // cutoff date
   const cutoffDate = new Date(CUT_OFF_DATE).getTime();
-
   if (new Date().getTime() > cutoffDate) {
+    const year = new Date().getFullYear().toString();
     return (
       <EmptyPlaceholder>
         <EmptyPlaceholder.Icon name="close" className="text-red-500" />
         <EmptyPlaceholder.Title>
-          Year 2024 registration is closed!
+          Year {year} registration is closed!
         </EmptyPlaceholder.Title>
         <EmptyPlaceholder.Description></EmptyPlaceholder.Description>
         <Link href="/">Go Home Now</Link>

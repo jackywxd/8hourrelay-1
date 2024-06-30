@@ -1,20 +1,13 @@
 'use client';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { FormSkeleton } from '@/components/FormSkeleton';
-import { DashboardHeader } from '@/components/header';
-import { Icons } from '@/components/icons';
 import StepperFormActions from '@/components/StepFormActions';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -38,9 +31,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useStepper } from '@/components/ui/stepper';
-import { RaceEntry, Team } from '@8hourrelay/database';
+import { RaceEntry } from '@8hourrelay/database';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { isDuplicatedEntry } from '@/actions/raceEntryActions';
 import { ShowSizeChart } from './ShowShirtSizeChart';
 
 const shirtSizeOptions = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'].map(
@@ -50,30 +44,51 @@ const shirtSizeOptions = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'].map(
   })
 );
 
-export const raceFormSchema = z.object({
-  isForOther: z.boolean().default(false),
-  firstName: z.string().min(1, { message: 'First name is required' }),
-  lastName: z.string().min(1, { message: 'Last name is required' }),
-  preferName: z.string().nullable().optional(),
-  phone: z.string().min(1, { message: 'Phone number is required' }).regex(
-    // verify is a valid phone number
-    new RegExp(
-      `^\\+?\\d{1,4}?[-.\\s]?\\(?\\d{1,3}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$`
+export const raceFormSchema = z
+  .object({
+    isForOther: z.boolean().default(false),
+    firstName: z.string().min(1, { message: 'First name is required' }),
+    lastName: z.string().min(1, { message: 'Last name is required' }),
+    preferName: z.string().nullable().optional(),
+    phone: z.string().min(1, { message: 'Phone number is required' }).regex(
+      // verify is a valid phone number
+      new RegExp(
+        `^\\+?\\d{1,4}?[-.\\s]?\\(?\\d{1,3}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$`
+      ),
+      {
+        message: 'Enter a valid phone number',
+      }
     ),
-    {
-      message: 'Enter a valid phone number',
+    gender: z.enum(['Male', 'Female']),
+    birthYear: z
+      .string()
+      .regex(new RegExp(`^[0-9]{4}$`), { message: 'Enter 4 digits birth year' })
+      .length(4, { message: 'Must be 4 digits' }),
+    size: z.string().min(1, { message: 'Select your shirt size' }),
+    wechatId: z.string().nullable().optional(),
+    personalBest: z.string().nullable().optional(),
+    isActive: z.boolean().default(true),
+  })
+  .superRefine(async (data, ctx) => {
+    console.log(`refine`, data);
+    if (data.firstName && data.lastName && data.gender && data.birthYear) {
+      const isDuplicated = await isDuplicatedEntry(data);
+      if (isDuplicated) {
+        ctx.addIssue({
+          path: ['firstName'],
+          code: z.ZodIssueCode.custom,
+          message: `This name has already been registered`,
+        });
+        ctx.addIssue({
+          path: ['lastName'],
+          code: z.ZodIssueCode.custom,
+          message: `This name has already been registered`,
+        });
+      }
     }
-  ),
-  gender: z.enum(['Male', 'Female']),
-  birthYear: z
-    .string()
-    .regex(new RegExp(`^[0-9]{4}$`), { message: 'Enter 4 digits birth year' })
-    .length(4, { message: 'Must be 4 digits' }),
-  size: z.string().min(1, { message: 'Select your shirt size' }),
-  wechatId: z.string().nullable().optional(),
-  personalBest: z.string().nullable().optional(),
-  isActive: z.boolean().default(true),
-});
+
+    return z.NEVER;
+  });
 
 export type RaceFormValues = z.infer<typeof raceFormSchema>;
 

@@ -3,10 +3,10 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 import {
-  getCurrentUser,
   getPaymentSessionBySessionId,
   updateExpiredPaymentSession,
-} from '@/actions';
+} from '@/actions/paymentActions';
+import { getCurrentUser } from '@/actions/userActions';
 import { EmptyPlaceholder } from '@/components/empty-placeholder';
 import Loader from '@/components/Loading';
 import { Button } from '@/components/ui/button';

@@ -1,6 +1,6 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/supabase/middleware";
-import { accessDenied } from "@/config/middleware";
+import { accessDenied } from '@/config/middleware';
+import { updateSession } from '@/supabase/middleware';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // Server Components only have read access to cookies.
 // This Middleware example can be used to refresh expired sessions before loading Server Component routes.
@@ -23,8 +23,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)",
-    "/",
-    "/auth/:path*",
-    "/dashboard/:path*",
+    '/',
+    '/auth/:path*',
   ],
 };

@@ -16,7 +16,11 @@ export const getAllRaces = async () => {
     where: eq(racesTable.year, year),
     with: {
       event: true,
-      teams: true,
+      teams: {
+        with: {
+          session: true,
+        },
+      },
     },
   });
 
@@ -45,15 +49,21 @@ export const getAllRaces = async () => {
     }
   }
 
-  return result.map((team) => {
-    const validatedData = selectRaceSchema.parse(team);
-    const teams = team.teams.map((t) => {
-      const { password, ...validatedTeam } = selectTeamSchema.parse(t);
-      return validatedTeam;
-    });
-    return { ...validatedData, teams } as Race<'teams'>;
+  return result.map((race) => {
+    const validatedData = selectRaceSchema.parse(race);
+    const teams = race.teams
+      .map((t) => {
+        const session = t.session;
+        const { password, ...validatedTeam } = selectTeamSchema.parse(t);
+        return { ...validatedTeam, session };
+      })
+      // return master and youth teams (no session) or open teams with sessions that completed
+      .filter((t) => !t.session || t.session.status === 'complete');
+    return { ...validatedData, teams };
   });
 };
+
+export type AllRaces = Awaited<ReturnType<typeof getAllRaces>>;
 
 // retrieve race by lookup key from the database
 // this function will return null if the race is not found

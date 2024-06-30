@@ -1,28 +1,41 @@
 'use client';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { startTransition, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { createNewTeam, queryTeamName } from '@/actions';
 import { EmptyPlaceholder } from '@/components/empty-placeholder';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Step, Stepper, useStepper } from '@/components/ui/stepper';
-import { capitalize, openInNewTab } from '@/lib/utils';
-import { insertTeamSchema, NewTeam, Race, Team } from '@8hourrelay/database';
+import { capitalize } from '@/lib/utils';
+import { AllRaces, NewTeam, Race } from '@8hourrelay/database';
 
+import Stripe from 'stripe';
 import SelectRaceStep from '../../../components/SelectRaceStep';
-import StepperFormActions from '../../../components/StepFormActions';
 import SetupTeamStepForm from './SetupTeamStepForm';
 import SubmitStepForm from './SubmitStepForm';
-import { revalidatePath } from 'next/cache';
 
 const year = new Date().getFullYear().toString();
 
-export default function CreateTeamSteps({ races }: { races: Race[] }) {
+export default function CreateTeamSteps({ races }: { races: AllRaces }) {
   const router = useRouter();
-  const [selectedRace, setSelectedRace] = useState<Race>(races[0]); // race category for the new team
-  const [newTeam, setTeam] = useState<NewTeam>({
+  const [selectedRace, setSelectedRace] = useState<
+    Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>
+  >(() => {
+    const { teams, ...race } = races[0];
+    return {
+      id: race.id,
+      isCompetitive: race.isCompetitive,
+      entryFee: race.entryFee,
+      stripePrice: race.stripePrice as unknown as Stripe.Price,
+    };
+  }); // race category for the new team
+  const [newTeam, setTeam] = useState<
+    Pick<
+      NewTeam,
+      'name' | 'password' | 'slogan' | 'isOpen' | 'year' | 'createdAt'
+    >
+  >({
     name: '',
     password: '',
     slogan: '',
@@ -35,7 +48,7 @@ export default function CreateTeamSteps({ races }: { races: Race[] }) {
   const [session, setSession] = useState('');
 
   const onSelectedRaceChange = useCallback(
-    (race: Race) => {
+    (race: Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>) => {
       console.log('onSelectedRaceChange', race);
       const teamData = { ...newTeam, raceId: race.id };
       setTeam(teamData);
@@ -110,7 +123,10 @@ function MyStepperFooter({
   newTeam,
   session,
 }: {
-  newTeam: NewTeam;
+  newTeam: Pick<
+    NewTeam,
+    'name' | 'password' | 'slogan' | 'isOpen' | 'year' | 'createdAt'
+  >;
   session: string;
 }) {
   const { activeStep, steps } = useStepper();
@@ -151,11 +167,14 @@ function MyStepperFooter({
           <Link href="/my-team">
             <Button className="w-full">My Team</Button>
           </Link>
-          <Link href="/teams/invite-team-members">
+          <Link href="/my-registrations">
+            <Button className="w-full">My Registration</Button>
+          </Link>
+          {/* <Link href="/teams/invite-team-members">
             <Button className="w-full" variant="default">
               Invite Team Members
             </Button>
-          </Link>
+          </Link> */}
         </div>
       </EmptyPlaceholder>
     </div>

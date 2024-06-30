@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { FaRegFaceFrown, FaRegFaceSmile } from 'react-icons/fa6';
 import { ErrorBoundary } from 'react-error-boundary';
+import { FaRegFaceFrown, FaRegFaceSmile } from 'react-icons/fa6';
 
-import { IUserTeam } from '@/actions';
+import { IUserTeam } from '@/actions/userActions';
 import { EmptyPlaceholder } from '@/components/empty-placeholder';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -17,10 +17,10 @@ import {
 } from '@/components/ui/card';
 import { capitalize } from '@/lib/utils';
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useMediaQuery } from '@/components/useMediaQuery';
 import { RaceEntriesList } from './RaceEntriesList';
 import { RaceEntriesTable } from './RaceEntriesTable';
-import { useMediaQuery } from '@/components/useMediaQuery';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 function MyRacePage({ team }: { team: IUserTeam }) {
   const isMobile = useMediaQuery(`(max-width: 768px)`);
@@ -38,10 +38,19 @@ function MyRacePage({ team }: { team: IUserTeam }) {
       const totalFemaleTeamMembers = team.raceEntries?.filter(
         (entry) => entry?.gender === 'Female'
       ).length;
-      if (team.race.isCompetitive) {
-        if (
-          team.race?.maxTeamSize! === totalTeamMembers &&
-          team.race?.minFemale! <= totalFemaleTeamMembers
+
+      if (team.race.maxTeamSize) {
+        if (team.race.isCompetitive && team.race.minFemale) {
+          if (
+            team.race.maxTeamSize === totalTeamMembers &&
+            team.race.minFemale <= totalFemaleTeamMembers &&
+            totalMinutes === 480
+          ) {
+            isValid = true;
+          }
+        } else if (
+          team.race.maxTeamSize >= totalTeamMembers &&
+          totalMinutes === 480
         ) {
           isValid = true;
         }
@@ -99,6 +108,7 @@ function MyRacePage({ team }: { team: IUserTeam }) {
             <CardContent>
               {isMobile ? (
                 <RaceEntriesList
+                  race={team?.race}
                   raceEntries={team?.raceEntries}
                   roster={team?.raceEntriesToTeams}
                 />
@@ -114,12 +124,14 @@ function MyRacePage({ team }: { team: IUserTeam }) {
                   </TabsList>
                   <TabsContent value="list">
                     <RaceEntriesList
+                      race={team?.race}
                       raceEntries={team?.raceEntries}
                       roster={team?.raceEntriesToTeams}
                     />
                   </TabsContent>
                   <TabsContent value="table">
                     <RaceEntriesTable
+                      race={team?.race}
                       raceEntries={team?.raceEntries}
                       roster={team?.raceEntriesToTeams}
                     />

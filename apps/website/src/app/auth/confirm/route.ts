@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  const email = searchParams.get('email');
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type') as EmailOtpType | null;
   const next = searchParams.get('next') ?? '/';
@@ -45,9 +46,23 @@ export async function GET(request: NextRequest) {
       }
     );
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser(); // this will update the cookie and refresh the token
+
+    if (!user || !user.email) {
+      await slackSendMsg(
+        `Failed to verify OTP! User not found! redirect to /auth/unauthorized`
+      );
+      // return the user to an error page with some instructions
+      redirectTo.searchParams.set('message', 'User not found');
+      redirectTo.pathname = `/auth/unauthorized`;
+      return NextResponse.redirect(redirectTo);
+    }
     const { error, data } = await supabase.auth.verifyOtp({
+      email: user.email,
       type,
-      token_hash,
+      token: token_hash,
     });
     console.log(data);
     console.log('SEARCH PARAMS');

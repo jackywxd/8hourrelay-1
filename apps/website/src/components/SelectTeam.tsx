@@ -1,24 +1,27 @@
 'use client';
-import { ChevronRight, CircleCheck } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { isValidTeamPassword, transferUserTeam } from '@/actions';
+import { transferUserTeam } from '@/actions/raceEntryActions';
+import { isValidTeamPassword } from '@/actions/teamActions';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { capitalize, cn } from '@/lib/utils';
 import { AllTeams, RaceEntryRoster, Team } from '@8hourrelay/database';
 import { Input, Radio, RadioGroup } from '@headlessui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Icons } from './icons';
+import { Button } from './ui/button';
 import {
   Card,
   CardContent,
@@ -26,10 +29,6 @@ import {
   CardFooter,
   CardHeader,
 } from './ui/card';
-import { Button } from './ui/button';
-import { Icons } from './icons';
-import { useFormState } from 'react-dom';
-import { useRouter } from 'next/navigation';
 
 export function SelectTeam({
   teams,
@@ -42,7 +41,17 @@ export function SelectTeam({
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [pending, startTransition] = useTransition();
   // Doesn't make sense to transfer to the same team
-  const filteredTeams = teams.filter((team) => team.id !== roster?.teamId);
+  const filteredTeams = teams.filter((team) => {
+    // if selected roster team race has an upper age (youth), should only return teams lowerAge larger than that
+    if (roster?.team?.race?.upperAge && team.race?.lowerAge) {
+      return (
+        team.id !== roster?.teamId &&
+        team.race?.lowerAge > roster?.team?.race?.upperAge
+      );
+    }
+    // for adult team member, return teams with no upper age
+    return team.id !== roster?.teamId && !team.race?.upperAge;
+  });
   const passwordFormSchema = z.object({
     password: z
       .string()

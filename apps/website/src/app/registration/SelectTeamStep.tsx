@@ -1,20 +1,16 @@
-'use client';
-import { ChevronRight, CircleCheck } from 'lucide-react';
+import { CircleCheck } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
-import { isValidTeamPassword } from '@/actions';
+import { isValidTeamPassword } from '@/actions/teamActions';
 import StepperFormActions from '@/components/StepFormActions';
-import { Card } from '@/components/ui/card';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { useStepper } from '@/components/ui/stepper';

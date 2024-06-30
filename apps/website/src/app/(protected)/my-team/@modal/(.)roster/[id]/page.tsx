@@ -1,14 +1,13 @@
 import { Suspense } from 'react';
 
-import { getRosterById } from '@/actions';
-import { EditTeamRoster } from '@/components/EditTeamRoster';
+import { getRosterById } from '@/actions/raceEntryActions';
+import { EditRoster } from '@/components/EditRoster';
 import { FormSkeleton } from '@/components/FormSkeleton';
 import { Modal } from '@/components/Modal';
-import { getAllTeams } from '@8hourrelay/database';
-import { EditRoster } from '@/components/EditRoster';
 import { SelectTeam } from '@/components/SelectTeam';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { capitalize } from '@/lib/utils';
+import { getAllTeams } from '@8hourrelay/database';
 
 const RosterPage = async ({
   params: { id },
@@ -17,6 +16,7 @@ const RosterPage = async ({
   params: { id: string };
   searchParams: any;
 }) => {
+  if (!id) return null;
   const roster = await getRosterById(+id);
   const teams = await getAllTeams();
   const action = searchParams.action;

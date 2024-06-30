@@ -41,7 +41,7 @@ import { Switch } from '@/components/ui/switch';
 import { Icons } from '@/components/icons';
 import { TeamByOwner } from '@8hourrelay/database';
 import { capitalize } from '@/lib/utils';
-import { deleteUserTeam, updateUserTeam } from '@/actions';
+import { deleteUserTeam, updateUserTeam } from '@/actions/teamActions';
 
 const teamFormSchema = z.object({
   isOpen: z.boolean().default(false).optional(),

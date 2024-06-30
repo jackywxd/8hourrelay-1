@@ -5,14 +5,14 @@ import { and, eq } from 'drizzle-orm';
 import {
   db,
   insertUserSchema,
+  messagesTable,
+  NewMessage,
   NewUser,
   selectUserSchema,
   teamsTable,
   updateUserSchema,
   User,
   usersTable,
-  messagesTable,
-  NewMessage,
 } from '../db';
 
 export const createUser = async (data: NewUser) => {

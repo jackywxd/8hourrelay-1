@@ -1,4 +1,4 @@
-import { IUserAllRaceEntries } from '@/actions';
+import { IUserAllRaceEntries } from '@/actions/raceEntryActions';
 import { EmptyPlaceholder } from '@/components/empty-placeholder';
 import { RaceEntryCreateButton } from '@/components/race-create-button';
 import { RaceEntriesList } from '@/components/RaceEntriesList';

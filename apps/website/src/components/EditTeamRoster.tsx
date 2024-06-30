@@ -1,54 +1,12 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { set, z } from 'zod';
 
-import { FormSkeleton } from '@/components/FormSkeleton';
-import { DashboardHeader } from '@/components/header';
-import { Icons } from '@/components/icons';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { capitalize } from '@/lib/utils';
+import { AllTeams, RaceEntryRoster } from '@8hourrelay/database';
 
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { capitalize, cn } from '@/lib/utils';
-import { getDirtyFields } from '@/lib/utils/form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { updateEntryRoster } from '@/actions';
-import { RaceEntryRoster, AllTeams } from '@8hourrelay/database';
-import { RaceEntriesTable } from '@/app/(protected)/my-team/RaceEntriesTable';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { SelectTeam } from './SelectTeam';
 import { EditRoster } from './EditRoster';
+import { SelectTeam } from './SelectTeam';
 
 export function EditTeamRoster({
   teams,

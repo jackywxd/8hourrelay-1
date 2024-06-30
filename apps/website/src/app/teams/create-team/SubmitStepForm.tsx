@@ -1,36 +1,33 @@
-'use client';
-import { useState, useCallback, useTransition, startTransition } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { usePostHog } from 'posthog-js/react';
+import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { toast } from 'sonner';
 
+import { createNewTeam } from '@/actions/teamActions';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-
 import { Form } from '@/components/ui/form';
 import { useStepper } from '@/components/ui/stepper';
-import { Race, NewTeam } from '@8hourrelay/database';
+import { capitalize } from '@/lib/utils';
+import { NewTeam, Race } from '@8hourrelay/database';
 
 import StepperFormActions from '../../../components/StepFormActions';
-import { createNewTeam } from '@/actions';
-import { capitalize } from '@/lib/utils';
-import { redirect } from 'next/navigation';
-import { usePostHog } from 'posthog-js/react';
 
 export default function SubmitStepForm({
   selectedRace,
   team,
   onNext,
 }: {
-  selectedRace: Race;
-  team: NewTeam;
+  selectedRace: Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>;
+  team: Pick<
+    NewTeam,
+    'name' | 'password' | 'slogan' | 'isOpen' | 'year' | 'createdAt'
+  >;
   onNext: (session: string) => void;
 }) {
   const [isPending, startTransition] = useTransition();

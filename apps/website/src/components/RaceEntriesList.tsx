@@ -1,8 +1,9 @@
 import Link from 'next/link';
 
+import { IUserAllRaceEntries } from '@/actions/raceEntryActions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { capitalize } from '@/lib/utils';
 import { Icons } from './icons';
-import { IUserAllRaceEntries } from '@/actions';
 
 export function RaceEntriesList({
   raceEntries,
@@ -27,7 +28,7 @@ const RaceEntryItem = ({
   raceEntry: IUserAllRaceEntries[0];
 }) => {
   if (!raceEntry) return null;
-  const race = new TRaceEntry(raceEntry);
+  const race = raceEntry;
   return (
     <Link href={`/my-registrations/entry/${raceEntry.id}`}>
       <div className="group relative mt-3 flex rounded-lg bg-muted px-2 py-4 shadow-md transition hover:bg-accent hover:text-accent-foreground focus:outline-none aria-checked:border-indigo-500 aria-checked:ring-1 aria-checked:ring-indigo-500 aria-checked:ring-offset-1">
@@ -42,12 +43,24 @@ const RaceEntryItem = ({
               }
               alt="Avatar"
             />
-            <AvatarFallback>{race.displayName}</AvatarFallback>
+            <AvatarFallback>
+              {capitalize(
+                race?.preferName
+                  ? race.preferName
+                  : `${race?.firstName} ${race?.lastName}`
+              )}
+            </AvatarFallback>
           </Avatar>
         </div>
         <div className="flex w-full items-center justify-around">
           <>
-            <span>{race.displayName}</span>
+            <span>
+              {capitalize(
+                race?.preferName
+                  ? race.preferName
+                  : `${race?.firstName} ${race?.lastName}`
+              )}
+            </span>
             <span>{race.email}</span>
           </>
           <Link href={`/teams/${encodeURIComponent(raceEntry.team.name)}`}>
@@ -71,11 +84,6 @@ const RaceEntryItem = ({
               </div>
             )}
           </div>
-          {/* <div>
-          <Suspense fallback={<div>Loading...</div>}>
-            <EditRaceEntry raceEntry={raceEntry} />
-          </Suspense>
-        </div> */}
         </div>
       </div>
     </Link>

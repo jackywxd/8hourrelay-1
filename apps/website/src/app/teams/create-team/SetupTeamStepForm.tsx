@@ -1,12 +1,9 @@
 'use client';
-import { startTransition, useCallback, useState, useTransition } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
 
-import { createNewTeam, queryTeamName } from '@/actions';
-import { Button } from '@/components/ui/button';
+import { queryTeamName } from '@/actions/teamActions';
 import {
   Form,
   FormControl,
@@ -18,17 +15,24 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useStepper } from '@/components/ui/stepper';
-import { insertTeamSchema, NewTeam, Race } from '@8hourrelay/database';
+import { NewTeam } from '@8hourrelay/database';
 
 import StepperFormActions from '../../../components/StepFormActions';
-import SubmitStepForm from './SubmitStepForm';
 
 export default function SetupTeamForm({
   team,
   setTeam,
 }: {
-  team: NewTeam;
-  setTeam: (team: NewTeam) => void;
+  team: Pick<
+    NewTeam,
+    'name' | 'password' | 'slogan' | 'isOpen' | 'year' | 'createdAt'
+  >;
+  setTeam: (
+    team: Pick<
+      NewTeam,
+      'name' | 'password' | 'slogan' | 'isOpen' | 'year' | 'createdAt'
+    >
+  ) => void;
 }) {
   const { nextStep } = useStepper();
 
@@ -45,7 +49,7 @@ export default function SetupTeamForm({
           }
           return true;
         },
-        { message: 'This name already in use' },
+        { message: 'This name already in use' }
       ),
     password: z.string().min(1, { message: 'Password is required' }),
     slogan: z.string().optional(),
@@ -56,7 +60,7 @@ export default function SetupTeamForm({
       console.log('formData', data);
       console.log(
         'validation result',
-        await zodResolver(teamFormSchema)(data, context, options),
+        await zodResolver(teamFormSchema)(data, context, options)
       );
       return zodResolver(teamFormSchema)(data, context, options);
     },
@@ -71,11 +75,11 @@ export default function SetupTeamForm({
   }
 
   return (
-    <div className="flex item-center justify-center w-full max-w-[600px]">
+    <div className="item-center flex w-full max-w-[600px] justify-center">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="text-start space-y-3 w-full"
+          className="w-full space-y-3 text-start"
         >
           <FormField
             control={form.control}
@@ -126,20 +130,6 @@ export default function SetupTeamForm({
           <StepperFormActions />
         </form>
       </Form>
-    </div>
-  );
-}
-
-function MyStepperFooter() {
-  const { activeStep, resetSteps, steps } = useStepper();
-
-  if (activeStep !== steps.length) {
-    return null;
-  }
-
-  return (
-    <div className="flex items-center justify-end gap-2">
-      <Button onClick={resetSteps}>Reset Stepper with Form</Button>
     </div>
   );
 }

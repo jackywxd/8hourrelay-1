@@ -56,7 +56,7 @@ import { Switch } from '@/components/ui/switch';
 import { useRouter } from 'next/navigation';
 import { getDirtyFields } from '@/lib/utils/form';
 import { toast } from 'sonner';
-import { updateUserTeam } from '@/actions';
+import { updateUserTeam } from '@/actions/teamActions';
 
 export function EditTeamSettings({ team }: { team: Team }) {
   const router = useRouter();

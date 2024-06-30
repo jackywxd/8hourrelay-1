@@ -1,28 +1,27 @@
-'use client'
+'use client';
 
-import * as React from 'react'
-import { useRouter } from 'next/navigation'
-import { useTranslation } from 'react-i18next'
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { useForm, useFormContext } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useFormContext } from 'react-hook-form';
+import { z } from 'zod';
 
-import { toast } from 'sonner'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
-import { createClient } from '@/supabase/client'
-import { useAuth } from '@/hooks/use-auth'
+import { changePassword } from '@/actions/authActions';
+import { useAuth } from '@/hooks/use-auth';
 
 const FormSchema = z
   .object({
@@ -32,21 +31,21 @@ const FormSchema = z
   .refine((val) => val.newPassword === val.confirmNewPassword, {
     path: ['confirmNewPassword'],
     params: { i18n: 'invalid_confirm_password' },
-  })
+  });
 
-type FormValues = z.infer<typeof FormSchema>
+type FormValues = z.infer<typeof FormSchema>;
 
 const defaultValues: Partial<FormValues> = {
   newPassword: '',
   confirmNewPassword: '',
-}
+};
 
 const ResetPasswordForm = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     mode: 'onSubmit',
     defaultValues,
-  })
+  });
 
   return (
     <Form {...form}>
@@ -56,12 +55,12 @@ const ResetPasswordForm = () => {
         <SubmitButton />
       </form>
     </Form>
-  )
-}
+  );
+};
 
 const NewPasswordField = () => {
-  const { t } = useTranslation()
-  const { control } = useFormContext()
+  const { t } = useTranslation();
+  const { control } = useFormContext();
 
   return (
     <FormField
@@ -84,12 +83,12 @@ const NewPasswordField = () => {
         </FormItem>
       )}
     />
-  )
-}
+  );
+};
 
 const ConfirmNewPasswordField = () => {
-  const { t } = useTranslation()
-  const { control } = useFormContext()
+  const { t } = useTranslation();
+  const { control } = useFormContext();
 
   return (
     <FormField
@@ -112,41 +111,34 @@ const ConfirmNewPasswordField = () => {
         </FormItem>
       )}
     />
-  )
-}
+  );
+};
 
 const SubmitButton = () => {
-  const router = useRouter()
-  const { t } = useTranslation()
-  const { handleSubmit, setError, getValues } = useFormContext()
-  const { setSession, setUser } = useAuth()
+  const router = useRouter();
+  const { t } = useTranslation();
+  const { handleSubmit, setError, getValues } = useFormContext();
+  const { setSession, setUser } = useAuth();
 
-  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
 
   const onSubmit = async () => {
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
-      const formValues = getValues()
+      const formValues = getValues();
 
-      const supabase = createClient()
-      const updated = await supabase.auth.updateUser({
-        password: formValues?.newPassword,
-      })
-      if (updated?.error) throw new Error(updated?.error?.message)
+      await changePassword(formValues.newPassword);
 
-      const unsigned = await supabase.auth.signOut()
-      if (unsigned?.error) throw new Error(unsigned?.error?.message)
+      setSession(null);
+      setUser(null);
 
-      setSession(null)
-      setUser(null)
+      toast.success(t('FormMessage.changed_successfully'));
 
-      toast.success(t('FormMessage.changed_successfully'))
-
-      router.refresh()
-      router.replace('/auth/signin')
+      router.refresh();
+      router.replace('/auth/signin');
     } catch (e: unknown) {
-      const err = (e as Error)?.message
+      const err = (e as Error)?.message;
       if (
         err.startsWith('New password should be different from the old password')
       ) {
@@ -154,14 +146,14 @@ const SubmitButton = () => {
           message: t(
             'FormMessage.new_password_should_be_different_from_the_old_password'
           ),
-        })
+        });
       } else {
-        toast.error(err)
+        toast.error(err);
       }
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <Button
@@ -172,7 +164,7 @@ const SubmitButton = () => {
     >
       {t('FormSubmit.change_password')}
     </Button>
-  )
-}
+  );
+};
 
-export { ResetPasswordForm }
+export { ResetPasswordForm };

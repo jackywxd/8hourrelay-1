@@ -98,7 +98,7 @@ const SignInForm = () => {
       >
         <EmailField />
         <PasswordField />
-        {process.env.NEXT_PUBLIC_ENV !== 'dev' && (
+        {process.env.NEXT_PUBLIC_ENV === 'dev1' && (
           <HCaptcha
             sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
             onVerify={onCaptchaChange}

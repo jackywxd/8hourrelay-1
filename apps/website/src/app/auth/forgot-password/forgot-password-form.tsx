@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { forgotPassword } from '@/actions/authActions';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -17,7 +18,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { createClient } from '@/supabase/client';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -50,18 +50,15 @@ const ForgotPasswordForm = () => {
   function onSubmit(formValues: FormValues) {
     startTransition(async () => {
       try {
-        const supabase = createClient();
-        const result = await supabase.auth.resetPasswordForEmail(
-          formValues?.email,
-          {
-            captchaToken: captchaToken ?? undefined,
-            // A URL to send the user to after they are confirmed.
-            // Don't forget to change the URL in supabase's email template.
-            redirectTo:
-              process.env.NEXT_PUBLIC_SITE_URL +
-              '/api/auth/confirm?next=/auth/reset-password',
-          }
-        );
+        const result = await forgotPassword({
+          email: formValues?.email,
+          captchaToken: captchaToken ?? undefined,
+          // A URL to send the user to after they are confirmed.
+          // Don't forget to change the URL in supabase's email template.
+          redirectTo:
+            process.env.NEXT_PUBLIC_SITE_URL +
+            '/api/auth/confirm?next=/auth/reset-password',
+        });
 
         // reset captcha after reset
         captchaRef.current?.resetCaptcha();

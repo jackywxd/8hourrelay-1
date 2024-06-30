@@ -21,8 +21,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
+import { signUp } from '@/actions/authActions';
 import { useAuth } from '@/hooks/use-auth';
-import { createClient } from '@/supabase/client';
 import { usePostHog } from 'posthog-js/react';
 
 const FormSchema = z
@@ -65,22 +65,13 @@ const SignUpForm = () => {
   function onSubmit(formValues: FormValues) {
     startTransition(async () => {
       try {
-        const supabase = createClient();
-        const signed = await supabase.auth.signUp({
+        const signed = await signUp({
           email: formValues?.email,
           password: formValues?.newPassword,
-          options: {
-            captchaToken: captchaToken ?? undefined,
-          },
+          captchaToken: captchaToken ?? undefined,
         });
-
         // reset captcha after signup
         captchaRef.current?.resetCaptcha();
-
-        if (signed?.error) throw new Error(signed?.error?.message);
-
-        const unsigned = await supabase.auth.signOut();
-        if (unsigned?.error) throw new Error(unsigned?.error?.message);
 
         // Analytics
         posthog.capture('user_sign_up', { email: formValues?.email });

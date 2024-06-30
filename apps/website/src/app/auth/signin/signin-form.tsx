@@ -22,8 +22,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
+import { login } from '@/actions/authActions';
 import { useAuth } from '@/hooks/use-auth';
-import { createClient } from '@/supabase/client';
 
 const FormSchema = z.object({
   email: z.string().nonempty().max(255).email(),
@@ -59,13 +59,10 @@ const SignInForm = () => {
     startTransition(async () => {
       try {
         console.log(`formValues`, formValues);
-        const supabase = createClient();
-        const signed = await supabase.auth.signInWithPassword({
+        const signed = await login({
           email: formValues?.email,
           password: formValues?.password,
-          options: {
-            captchaToken: captchaToken ?? undefined,
-          },
+          captchaToken: captchaToken ?? undefined,
         });
         // reset captcha after  login
         captchaRef.current?.resetCaptcha();

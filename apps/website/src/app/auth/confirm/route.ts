@@ -1,6 +1,7 @@
+import { slackSendMsg } from '@/lib/slack';
 import { Database } from '@/types/supabase';
-import { createServerClient, CookieOptions } from '@supabase/ssr';
-import { createClient, type EmailOtpType } from '@supabase/supabase-js';
+import { CookieOptions, createServerClient } from '@supabase/ssr';
+import { type EmailOtpType } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -55,6 +56,9 @@ export async function GET(request: NextRequest) {
     if (!error) {
       return NextResponse.redirect(redirectTo);
     } else {
+      await slackSendMsg(
+        `Failed to verify OTP! ${error.message}! redirect to /auth/unauthorized`
+      );
       // return the user to an error page with some instructions
       redirectTo.searchParams.set('message', error.message);
       redirectTo.pathname = `/auth/unauthorized`;

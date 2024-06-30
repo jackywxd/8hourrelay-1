@@ -1,13 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
+import { changePassword } from '@/actions/authActions';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -18,10 +18,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
-
-import { changePassword } from '@/actions/authActions';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const FormSchema = z
   .object({
@@ -41,18 +39,60 @@ const defaultValues: Partial<FormValues> = {
 };
 
 const ResetPasswordForm = () => {
+  const [isSubmitting, startTransition] = React.useTransition();
+  const { setSession, setUser } = useAuth();
+  const { t } = useTranslation();
+  const router = useRouter();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     mode: 'onSubmit',
     defaultValues,
   });
 
+  function onSubmit(formValues: FormValues) {
+    startTransition(async () => {
+      try {
+        await changePassword(formValues.newPassword);
+
+        setSession(null);
+        setUser(null);
+
+        toast.success(t('FormMessage.changed_successfully'));
+
+        router.refresh();
+        router.replace('/auth/signin');
+      } catch (e: unknown) {
+        const err = (e as Error)?.message;
+        if (
+          err.startsWith(
+            'New password should be different from the old password'
+          )
+        ) {
+          toast.error(
+            t(
+              'FormMessage.new_password_should_be_different_from_the_old_password'
+            )
+          );
+        } else {
+          toast.error(err);
+        }
+      }
+    });
+  }
   return (
     <Form {...form}>
-      <form method="POST" noValidate className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        method="POST"
+        noValidate
+        className="space-y-4"
+      >
         <NewPasswordField />
         <ConfirmNewPasswordField />
-        <SubmitButton />
+        <Button type="submit" disabled={isSubmitting} className="w-full">
+          {t('FormSubmit.change_password')}
+        </Button>
       </form>
     </Form>
   );
@@ -111,59 +151,6 @@ const ConfirmNewPasswordField = () => {
         </FormItem>
       )}
     />
-  );
-};
-
-const SubmitButton = () => {
-  const router = useRouter();
-  const { t } = useTranslation();
-  const { handleSubmit, setError, getValues } = useFormContext();
-  const { setSession, setUser } = useAuth();
-
-  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-
-  const onSubmit = async () => {
-    try {
-      setIsSubmitting(true);
-
-      const formValues = getValues();
-
-      await changePassword(formValues.newPassword);
-
-      setSession(null);
-      setUser(null);
-
-      toast.success(t('FormMessage.changed_successfully'));
-
-      router.refresh();
-      router.replace('/auth/signin');
-    } catch (e: unknown) {
-      const err = (e as Error)?.message;
-      if (
-        err.startsWith('New password should be different from the old password')
-      ) {
-        setError('newPassword', {
-          message: t(
-            'FormMessage.new_password_should_be_different_from_the_old_password'
-          ),
-        });
-      } else {
-        toast.error(err);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <Button
-      type="submit"
-      onClick={handleSubmit(onSubmit)}
-      disabled={isSubmitting}
-      className="w-full"
-    >
-      {t('FormSubmit.change_password')}
-    </Button>
   );
 };
 

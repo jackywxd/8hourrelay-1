@@ -1,7 +1,6 @@
 import { accessDenied } from '@/config/middleware';
 import { updateSession } from '@/supabase/middleware';
 import { type NextRequest, NextResponse } from 'next/server';
-import { slackSendMsg } from './lib/slack';
 
 // Server Components only have read access to cookies.
 // This Middleware example can be used to refresh expired sessions before loading Server Component routes.
@@ -15,7 +14,6 @@ export async function middleware(request: NextRequest) {
   })[0];
   console.log(`denied`, denied);
   if (denied) {
-    await slackSendMsg(`Access Denied! ${JSON.stringify(denied)}`);
     return NextResponse.redirect(new URL(denied.to, request.url));
   }
 

@@ -1,12 +1,11 @@
-import * as React from 'react';
 import { redirect } from 'next/navigation';
 
-import { Logo } from '@/components/logo';
-import { Title } from '@/components/title';
-import { Description } from '@/components/description';
-import { TextLink } from '@/components/text-link';
 import { ButtonLink } from '@/components/button-link';
+import { Description } from '@/components/description';
 import { LanguageToggleButton } from '@/components/language-toggle-button';
+import { Logo } from '@/components/logo';
+import { TextLink } from '@/components/text-link';
+import { Title } from '@/components/title';
 
 import { ResetPasswordForm } from './reset-password-form';
 
@@ -42,7 +41,7 @@ export default function ResetPasswordPage({
           <Description text="ResetPasswordPage.description" translate="yes" />
         </div>
         <div className="grid gap-6">
-          <ResetPasswordForm />
+          <ResetPasswordForm token_hash={searchParams?.token_hash} />
         </div>
         <div className="flex items-center justify-between text-sm">
           <TextLink

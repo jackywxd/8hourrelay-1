@@ -1,4 +1,7 @@
-import { createClient } from '@/supabase/client';
+'user server';
+
+import { createClient } from '@/supabase/server';
+import 'server-only';
 
 export const login = async (form: {
   /** The user's email address. */
@@ -56,9 +59,14 @@ export const forgotPassword = async (form: {
   return result;
 };
 
-export const changePassword = async (password: string) => {
-  // the user should have been signed in by now
+export const changePassword = async (token_hash: string, password: string) => {
   const supabase = createClient();
+  // login user with token
+  const { error } = await supabase.auth.verifyOtp({
+    type: 'recovery',
+    token_hash,
+  });
+  if (error) throw new Error(error?.message);
   // update the user's password
   const updated = await supabase.auth.updateUser({
     password,

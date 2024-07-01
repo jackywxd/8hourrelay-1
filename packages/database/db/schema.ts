@@ -19,6 +19,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
+import { genderEnum, roleEnum, sizeEnum } from './modelTypes';
 
 // custom lower function
 export function lower(col: AnyPgColumn): SQL {
@@ -38,17 +39,11 @@ export const createTable = pgTableCreator(
 );
 
 ///////////////////////////// ENUMS
-const roleEnum = ['admin', 'captain', 'member'] as const;
 export const UserRoleEnum = pgEnum('user_role', roleEnum);
-export type UserRole = (typeof roleEnum)[number];
 
-const genderEnum = ['Male', 'Female'] as const;
 export const GenderTypeEnum = pgEnum('gender_type', genderEnum);
-export type GenderType = (typeof genderEnum)[number];
 
-const sizeEnum = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'] as const;
 export const SizeTypeEnum = pgEnum('size_type', sizeEnum);
-export type SizeType = (typeof sizeEnum)[number];
 
 ///////////////////////////// TABLES
 export const eventsTable = createTable('events', {

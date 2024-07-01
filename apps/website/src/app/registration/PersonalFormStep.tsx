@@ -31,18 +31,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useStepper } from '@/components/ui/stepper';
-import { RaceEntry } from '@8hourrelay/database';
+import { RaceEntry, sizeEnum } from '@8hourrelay/database/db/modelTypes';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { isDuplicatedEntry } from '@/actions/raceEntryActions';
 import { ShowSizeChart } from './ShowShirtSizeChart';
 
-const shirtSizeOptions = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'].map(
-  (m) => ({
-    value: m,
-    label: m,
-  })
-);
+const shirtSizeOptions = sizeEnum.map((m) => ({
+  value: m,
+  label: m,
+}));
 
 export const raceFormSchema = z
   .object({

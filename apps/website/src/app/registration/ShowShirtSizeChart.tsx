@@ -1,27 +1,23 @@
-import Image from 'next/image';
+import sizeChartPng from '@/assets/img/shirt_size.jpg';
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import sizeChartPng from '@/assets/img/shirt-size.png';
+import Image from 'next/image';
 
 export function ShowSizeChart() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <span className="underline hover:cursor-pointer text-xs">
+        <span className="text-xs underline hover:cursor-pointer">
           Size Chart
         </span>
       </AlertDialogTrigger>
-      <AlertDialogContent>
-        <div className="relative h-full">
+      <AlertDialogContent className="max-w-[800px] md:w-[1024px]">
+        <div className="w-full">
           <Image
             src={sizeChartPng}
             alt="sizeChart"

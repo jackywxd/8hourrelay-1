@@ -35,7 +35,7 @@ import { RaceEntry, sizeEnum } from '@8hourrelay/database/db/modelTypes';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { isDuplicatedEntry } from '@/actions/raceEntryActions';
-import { ShowSizeChart } from './ShowShirtSizeChart';
+import { ShowSizeChart } from '@/components/ShowShirtSizeChart';
 
 const shirtSizeOptions = sizeEnum.map((m) => ({
   value: m,

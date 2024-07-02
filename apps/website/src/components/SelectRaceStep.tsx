@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 
 import { useStepper } from '@/components/ui/stepper';
-import { AllRaces, Race } from '@8hourrelay/database';
+import { AllRaces } from '@8hourrelay/database';
+
 import { Radio, RadioGroup } from '@headlessui/react';
 import { CircleCheck } from 'lucide-react';
 
@@ -17,22 +18,12 @@ export default function SelectRaceStep({
   onNext,
 }: {
   races: AllRaces;
-  selectedRace: Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>;
-  onNext: (
-    race: Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>
-  ) => void;
+  selectedRace: AllRaces[0];
+  onNext: (race: AllRaces[0]) => void;
 }) {
-  const [selected, setSelected] = useState<
-    Pick<Race, 'id' | 'isCompetitive' | 'stripePrice' | 'entryFee'>
-  >(() => {
+  const [selected, setSelected] = useState<AllRaces[0]>(() => {
     if (selectedRace) return selectedRace;
-    const { teams, ...race } = races[0];
-    return {
-      id: race.id,
-      isCompetitive: race.isCompetitive,
-      entryFee: race.entryFee,
-      stripePrice: race.stripePrice as unknown as Stripe.Price,
-    };
+    return races[0];
   });
   const { nextStep } = useStepper();
   const form = useForm();

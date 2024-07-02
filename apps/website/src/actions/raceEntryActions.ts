@@ -30,7 +30,9 @@ import {
 } from '@8hourrelay/database';
 
 import { revalidatePath } from 'next/cache';
+
 import Stripe from 'stripe';
+
 import { createStripeSession } from './stripeApi';
 import { getCurrentUser } from './userActions';
 

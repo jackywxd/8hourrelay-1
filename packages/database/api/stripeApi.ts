@@ -1,7 +1,7 @@
 import 'server-only';
 
-import Stripe from 'stripe';
 import { NewTeam, Race, User, getRaceById } from '@8hourrelay/database';
+import Stripe from 'stripe';
 
 const apiKey = process.env.STRIPE_SECRET;
 
@@ -11,11 +11,11 @@ const stripe = new Stripe(apiKey!, {
 });
 
 const HOST_NAME =
-  process.env.ENV === 'prod'
+  process.env.STAGE === 'prod'
     ? 'https://8hourrelay.com'
-    : process.env.ENV === 'staging'
+    : process.env.STAGE === 'staging'
       ? 'https://staging.8hourrelay.com'
-      : 'https://staging.8hourrelay.com';
+      : 'http://localhost:3000';
 
 export const listStripePrices = async (lookup_keys: string[]) => {
   const products = await stripe.prices.list({

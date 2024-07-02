@@ -1,9 +1,9 @@
-import { IncomingWebhook } from '@slack/webhook';
 import { WebClient } from '@slack/web-api';
+import { IncomingWebhook } from '@slack/webhook';
 
 const url = process.env.SLACK_WEBHOOK;
 
-const ENV = process.env.ENV;
+const ENV = process.env.STAGE || 'dev';
 
 const web = new WebClient(process.env.SLACK_TOKEN);
 

@@ -1,6 +1,7 @@
 'use server';
 
 import { AllRaces, db, User, usersTable } from '@8hourrelay/database';
+
 import { eq } from 'drizzle-orm';
 import 'server-only';
 import Stripe from 'stripe';

@@ -5,9 +5,11 @@ import { Form } from '@/components/ui/form';
 
 import { useStepper } from '@/components/ui/stepper';
 import { AllRaces } from '@8hourrelay/database';
+
 import { Radio, RadioGroup } from '@headlessui/react';
 import { CircleCheck } from 'lucide-react';
 
+import Stripe from 'stripe';
 import StepperFormActions from './StepFormActions';
 
 export default function SelectRaceStep({

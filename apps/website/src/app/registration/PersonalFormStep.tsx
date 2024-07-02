@@ -31,75 +31,86 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useStepper } from '@/components/ui/stepper';
-import { RaceEntry, sizeEnum } from '@8hourrelay/database/db/modelTypes';
+import { NewRaceEntry, sizeEnum } from '@8hourrelay/database/db/modelTypes';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { isDuplicatedEntry } from '@/actions/raceEntryActions';
+import { isDuplicatedEntry, isRaceAgeValid } from '@/actions/raceEntryActions';
 import { ShowSizeChart } from '@/components/ShowShirtSizeChart';
+import { AllRaces } from '@8hourrelay/database';
 
 const shirtSizeOptions = sizeEnum.map((m) => ({
   value: m,
   label: m,
 }));
 
-export const raceFormSchema = z
-  .object({
-    isForOther: z.boolean().default(false),
-    firstName: z.string().min(1, { message: 'First name is required' }),
-    lastName: z.string().min(1, { message: 'Last name is required' }),
-    preferName: z.string().nullable().optional(),
-    phone: z.string().min(1, { message: 'Phone number is required' }).regex(
-      // verify is a valid phone number
-      new RegExp(
-        `^\\+?\\d{1,4}?[-.\\s]?\\(?\\d{1,3}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$`
-      ),
-      {
-        message: 'Enter a valid phone number',
-      }
-    ),
-    gender: z.enum(['Male', 'Female']),
-    birthYear: z
-      .string()
-      .regex(new RegExp(`^[0-9]{4}$`), { message: 'Enter 4 digits birth year' })
-      .length(4, { message: 'Must be 4 digits' }),
-    size: z.string().min(1, { message: 'Select your shirt size' }),
-    wechatId: z.string().nullable().optional(),
-    personalBest: z.string().nullable().optional(),
-    isActive: z.boolean().default(true),
-  })
-  .superRefine(async (data, ctx) => {
-    console.log(`refine`, data);
-    if (data.firstName && data.lastName && data.gender && data.birthYear) {
-      const isDuplicated = await isDuplicatedEntry(data);
-      if (isDuplicated) {
-        ctx.addIssue({
-          path: ['firstName'],
-          code: z.ZodIssueCode.custom,
-          message: `This name has already been registered`,
-        });
-        ctx.addIssue({
-          path: ['lastName'],
-          code: z.ZodIssueCode.custom,
-          message: `This name has already been registered`,
-        });
-      }
-    }
-
-    return z.NEVER;
-  });
-
-export type RaceFormValues = z.infer<typeof raceFormSchema>;
-
 export default function PersonalFormStep({
+  race,
   raceEntry,
   onNext,
 }: {
-  raceEntry: RaceEntry;
-  onNext?: (values: RaceFormValues) => void;
+  race: AllRaces[0];
+  raceEntry: Omit<NewRaceEntry, 'userId' | 'teamId' | 'sessionId'> | null;
+  onNext?: (values: any) => void;
 }) {
   const { nextStep } = useStepper();
+  const raceFormSchema = z
+    .object({
+      isForOther: z.boolean().default(false),
+      firstName: z.string().min(1, { message: 'First name is required' }),
+      lastName: z.string().min(1, { message: 'Last name is required' }),
+      preferName: z.string().nullable().optional(),
+      phone: z.string().min(1, { message: 'Phone number is required' }).regex(
+        // verify is a valid phone number
+        new RegExp(
+          `^\\+?\\d{1,4}?[-.\\s]?\\(?\\d{1,3}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$`
+        ),
+        {
+          message: 'Enter a valid phone number',
+        }
+      ),
+      gender: z.enum(['Male', 'Female']),
+      birthYear: z
+        .string()
+        .regex(new RegExp(`^[0-9]{4}$`), {
+          message: 'Enter 4 digits birth year',
+        })
+        .length(4, { message: 'Must be 4 digits' }),
+      size: z.string().min(1, { message: 'Select your shirt size' }),
+      wechatId: z.string().nullable().optional(),
+      personalBest: z.string().nullable().optional(),
+      isActive: z.boolean().default(true),
+    })
+    .superRefine(async (data, ctx) => {
+      console.log(`refine`, { data, race });
+      if (data.birthYear && race) {
+        if (await isRaceAgeValid(data.birthYear, race)) {
+          ctx.addIssue({
+            path: ['birthYear'],
+            code: z.ZodIssueCode.custom,
+            message: `Please enter a valid birth year`,
+          });
+        }
+      }
+      if (data.firstName && data.lastName && data.gender && data.birthYear) {
+        const isDuplicated = await isDuplicatedEntry(data);
+        if (isDuplicated) {
+          ctx.addIssue({
+            path: ['firstName'],
+            code: z.ZodIssueCode.custom,
+            message: `This name has already been registered`,
+          });
+          ctx.addIssue({
+            path: ['lastName'],
+            code: z.ZodIssueCode.custom,
+            message: `This name has already been registered`,
+          });
+        }
+      }
 
-  const form = useForm<RaceFormValues>({
+      return z.NEVER;
+    });
+
+  const form = useForm<z.infer<typeof raceFormSchema>>({
     resolver: zodResolver(raceFormSchema),
     defaultValues: {
       ...raceEntry,
@@ -122,7 +133,7 @@ export default function PersonalFormStep({
     }
   }, [form.watch('isForOther')]);
 
-  const onSubmit = async (data: RaceFormValues) => {
+  const onSubmit = async (data: z.infer<typeof raceFormSchema>) => {
     console.log(`Register Form data`, data);
     onNext && onNext(data);
     onNext && nextStep();

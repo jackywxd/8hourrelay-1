@@ -3,8 +3,8 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 import SelectRaceStep from '@/components/SelectRaceStep';
-import { Step, Stepper, useStepper } from '@/components/ui/stepper';
-import { NewRaceEntry, Race, Team } from '@8hourrelay/database';
+import { Step, Stepper } from '@/components/ui/stepper';
+import { AllRaces, NewRaceEntry, TeamById } from '@8hourrelay/database';
 
 import EmergencyContactStep from './EmergencyContactStep';
 import PaymentStep from './PaymentStep';
@@ -16,34 +16,44 @@ export default function RegistrationSteps({
   races,
   team,
 }: {
-  races: Race<'teams'>[];
-  team?: Team;
+  races: AllRaces;
+  team?: TeamById;
 }) {
   const router = useRouter();
   // Stripe payment session
   const [session, setSession] = useState('');
 
-  const [selectedRace, setSelectedRace] = useState<Race<'teams'>>(() => {
+  const [selectedRace, setSelectedRace] = useState<AllRaces[0]>(() => {
     if (team) {
-      return races.find((r) => r.id === team.raceId);
+      return races.find((r) => r && r.id === team.raceId) || races[0];
     }
     return races[0];
   });
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(
+  const [selectedTeam, setSelectedTeam] = useState<TeamById | null>(
     team ? team : null
   ); // no team selected
   const [emergencyContact, setEmergencyContact] = useState({
     emergencyName: '',
     emergencyPhone: '',
   });
-  const [raceEntry, setRaceEntry] = useState<Partial<NewRaceEntry>>({
+  const [raceEntry, setRaceEntry] = useState<
+    Omit<NewRaceEntry, 'userId' | 'teamId' | 'sessionId'>
+  >({
     year: new Date().getFullYear().toString(),
     firstName: '',
     lastName: '',
     preferName: '',
+    birthYear: '',
+    gender: '' as any,
+    size: '' as any,
+    phone: '',
+    email: '',
+    emergencyName: '',
+    emergencyPhone: '',
+    accepted: false,
   });
 
-  const onSelectedTeam = useCallback((t: Team) => {
+  const onSelectedTeam = useCallback((t: TeamById) => {
     console.log('selected team', t);
     setSelectedTeam(t);
     const race = { ...raceEntry, teamId: t.id };
@@ -89,8 +99,11 @@ export default function RegistrationSteps({
       description: '',
       component: (
         <PersonalFormStep
+          race={selectedRace}
           raceEntry={raceEntry}
-          onNext={(data) => setRaceEntry(data)}
+          onNext={(
+            data: Omit<NewRaceEntry, 'userId' | 'teamId' | 'sessionId'>
+          ) => setRaceEntry(data)}
         />
       ),
     },

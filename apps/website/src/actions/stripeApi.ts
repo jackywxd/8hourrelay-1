@@ -1,6 +1,6 @@
 'use server';
 
-import { db, Race, User, usersTable } from '@8hourrelay/database';
+import { AllRaces, db, User, usersTable } from '@8hourrelay/database';
 import { eq } from 'drizzle-orm';
 import 'server-only';
 import Stripe from 'stripe';
@@ -14,7 +14,7 @@ const stripe = new Stripe(apiKey!, {
 
 export const createStripeSession = async (
   user: User,
-  race: Pick<Race, 'isCompetitive' | 'stripePrice'>
+  race: Pick<AllRaces[0], 'isCompetitive' | 'stripePrice'>
 ) => {
   const email = user.email;
 

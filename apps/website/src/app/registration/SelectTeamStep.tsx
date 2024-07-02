@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form';
 import { useStepper } from '@/components/ui/stepper';
 import { capitalize, cn } from '@/lib/utils';
-import { Race, Team } from '@8hourrelay/database';
+import { AllRaces, TeamById } from '@8hourrelay/database';
 import { Input, Radio, RadioGroup } from '@headlessui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -24,11 +24,11 @@ export default function SelectTeamStep({
   selectedRace,
   onNext,
 }: {
-  team: Team | null;
-  onNext: (t: Team) => void;
-  selectedRace: Race<'teams'>;
+  team: TeamById | null;
+  onNext: (t: TeamById) => void;
+  selectedRace: AllRaces[0];
 }) {
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(
+  const [selectedTeam, setSelectedTeam] = useState<TeamById | null>(
     team ? team : null
   );
 
@@ -58,8 +58,8 @@ export default function SelectTeamStep({
   });
   const { nextStep } = useStepper();
   console.log(`selectedRace `, selectedRace);
-  function onSubmit(formData: any) {
-    console.log('form submitted selected', selectedTeam, formData);
+  function onSubmit() {
+    console.log('form submitted selected', selectedTeam);
     if (!selectedTeam) {
       toast.error('Please select a team');
       return;

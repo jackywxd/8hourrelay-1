@@ -25,7 +25,8 @@ import {
 
 import { useStepper } from '@/components/ui/stepper';
 import { capitalize } from '@/lib/utils';
-import { Race, RaceEntry, Team } from '@8hourrelay/database';
+import { AllRaces, NewRaceEntry, TeamById } from '@8hourrelay/database';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { usePostHog } from 'posthog-js/react';
@@ -46,9 +47,9 @@ export default function ReviewStep({
   raceEntry,
   onNext,
 }: {
-  selectedRace: Race<'teams'>;
-  selectedTeam: Team;
-  raceEntry: RaceEntry;
+  selectedRace: AllRaces[0];
+  selectedTeam: TeamById | null;
+  raceEntry: Omit<NewRaceEntry, 'userId' | 'teamId' | 'sessionId'>;
   onNext: (session?: string) => void;
 }) {
   const { nextStep } = useStepper();
@@ -69,6 +70,10 @@ export default function ReviewStep({
         if (!values.accepted) {
           toast.error(`You must accept race wavier`);
           return;
+        }
+        if (!selectedTeam || !selectedRace || !raceEntry) {
+          toast.error(`Invalid data`);
+          throw new Error('Invalid data');
         }
         const session = await createNewRaceEntry(
           raceEntry,

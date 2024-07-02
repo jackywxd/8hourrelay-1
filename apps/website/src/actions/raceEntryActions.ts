@@ -4,6 +4,7 @@ import { cache } from 'react';
 import 'server-only';
 
 import {
+  AllRaces,
   createOpenRaceEntry,
   createPaidRaceEntry,
   findDuplicateRaceEntry,
@@ -20,7 +21,7 @@ import {
   RaceEntry,
   Roster,
   selectRaceEntrySchema,
-  Team,
+  TeamById,
   transferRosterToNewTeam,
   updateRaceEntry,
   updateRaceEntryOrder,
@@ -29,20 +30,23 @@ import {
 } from '@8hourrelay/database';
 
 import { revalidatePath } from 'next/cache';
+
+import Stripe from 'stripe';
+
 import { createStripeSession } from './stripeApi';
 import { getCurrentUser } from './userActions';
 
 export const createNewRaceEntry = async (
-  data: NewRaceEntry,
-  selectedRace: Race,
-  selectedTeam: Team
+  data: Omit<NewRaceEntry, 'userId' | 'teamId' | 'sessionId'>,
+  selectedRace: AllRaces[0],
+  selectedTeam: TeamById
 ) => {
   try {
     console.log(`createNewRaceEntry`, data, selectedRace, selectedTeam);
     const user = await getCurrentUser();
     const year = new Date().getFullYear().toString();
     if (!user) throw new Error('User not found');
-    const inputData: NewRaceEntry = {
+    const inputData: Omit<NewRaceEntry, 'sessionId'> = {
       ...data,
       email: user.email!,
       userId: user.id,
@@ -61,19 +65,18 @@ export const createNewRaceEntry = async (
       });
 
       console.log(`validatedRaceEntry`, validatedRaceEntry);
+      const price = selectedRace.stripePrice as unknown as Stripe.Price;
       const newSession: NewSession = {
         sessionId: session.id,
-        priceId: selectedRace.stripePrice.id,
-        productId: selectedRace.stripePrice.product as string,
+        priceId: price.id,
+        productId: price.product as string,
         paymentIntentId: (session.payment_intent as string) ?? null, // null when payment is not completed
         status: session.status as string,
         paymentStatus: session.payment_status,
         // session.expires_at is not in milliseconds
         expiresAt: new Date(session.expires_at * 1000),
-        amount: selectedRace.stripePrice.unit_amount
-          ? +selectedRace.stripePrice.unit_amount
-          : 0,
-        currency: selectedRace.stripePrice.currency,
+        amount: price.unit_amount ? +price.unit_amount : 0,
+        currency: price.currency,
         payload: session,
       };
       await createPaidRaceEntry(
@@ -247,7 +250,9 @@ export const transferUserTeam = async (
   }
 };
 
-export const isDuplicatedEntry = async (data: Partial<RaceEntry>) => {
+export const isDuplicatedEntry = async (
+  data: Pick<RaceEntry, 'firstName' | 'lastName' | 'birthYear' | 'gender'>
+) => {
   try {
     const user = await getCurrentUser();
     if (!user) throw new Error('User not found');
@@ -267,4 +272,28 @@ export const isDuplicatedEntry = async (data: Partial<RaceEntry>) => {
     console.log(error);
     throw error;
   }
+};
+// check va
+export const isRaceAgeValid = async (birthYear: string, race: AllRaces[0]) => {
+  let upperYear = '',
+    lowerYear = '';
+
+  const year = new Date().getFullYear();
+  if (race.lowerAge) upperYear = (year - race.lowerAge).toString();
+  console.log(`upperYear`, upperYear);
+
+  if (race.upperAge) lowerYear = (year - race.upperAge).toString();
+  console.log(`lowerYear `, lowerYear);
+
+  if (
+    upperYear &&
+    lowerYear &&
+    birthYear <= upperYear &&
+    birthYear >= lowerYear
+  )
+    return false;
+  else if (!lowerYear && upperYear && birthYear < upperYear) return false;
+  else if (!upperYear && lowerYear && birthYear >= lowerYear) return false;
+
+  return true;
 };

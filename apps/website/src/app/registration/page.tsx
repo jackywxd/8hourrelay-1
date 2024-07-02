@@ -71,19 +71,20 @@ async function RegistrationPage({ searchParams }: any) {
       );
     }
 
-    return (
-      <DashboardShell>
-        <DashboardHeader
-          heading="Registration"
-          text="Register to participate in the 2024 8 Hour Relay."
-        ></DashboardHeader>
-        <div className="flex h-full w-full flex-1 flex-col">
-          <Suspense fallback={<FormSkeleton items={5} />}>
-            <RegistrationSteps races={races} team={team} />
-          </Suspense>
-        </div>
-      </DashboardShell>
-    );
+    if (team)
+      return (
+        <DashboardShell>
+          <DashboardHeader
+            heading="Registration"
+            text="Register to participate in the 2024 8 Hour Relay."
+          ></DashboardHeader>
+          <div className="flex h-full w-full flex-1 flex-col">
+            <Suspense fallback={<FormSkeleton items={5} />}>
+              <RegistrationSteps races={races} team={team} />
+            </Suspense>
+          </div>
+        </DashboardShell>
+      );
   }
 
   return (

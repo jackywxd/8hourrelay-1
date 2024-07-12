@@ -6,24 +6,24 @@ import { type NextRequest, NextResponse } from 'next/server';
 // This Middleware example can be used to refresh expired sessions before loading Server Component routes.
 export async function middleware(request: NextRequest) {
   const { response, authenticated } = await updateSession(request);
-  console.log(`middleware`, { authenticated, ur: request.url });
-  const denied = accessDenied.filter((deny) => {
-    if (!request.nextUrl.pathname.startsWith(deny.from)) return;
-    if (authenticated !== deny?.authenticated) return;
-    return deny;
-  })[0];
-  console.log(`denied`, denied);
-  if (denied) {
-    return NextResponse.redirect(new URL(denied.to, request.url));
+  console.log('middleware', { authenticated, url: request.url });
+
+  // Access Control Logic
+  const deniedRule = accessDenied.find((rule) => {
+    return (
+      request.nextUrl.pathname.startsWith(rule.from) &&
+      authenticated === rule.authenticated
+    );
+  });
+
+  if (deniedRule) {
+    return NextResponse.redirect(new URL(deniedRule.to, request.url));
   }
 
   return response;
 }
 
+// Improved Configuration with Negative Lookahead
 export const config = {
-  matcher: [
-    // "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)",
-    '/',
-    '/auth/:path*',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon\\.ico).*)'],
 };

@@ -8,8 +8,11 @@ export function cn(...inputs: ClassValue[]) {
 // function to convert a string to uppercase each word
 export function capitalize(str?: string | null) {
   if (!str) return '';
-  return str
-    .split(' ')
+  const words = str.split(' ');
+  // if there is only 1 word, return the original string
+  if (words.length === 1) return str;
+  // if there are multiple words, capitalize each word
+  return words
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }

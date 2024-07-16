@@ -84,7 +84,9 @@ export const getTeamByName = async (name: string) => {
   const result = await db.query.teamsTable.findFirst({
     where: and(eq(teamsTable.name, name), eq(teamsTable.year, year)),
     columns: {
+      id: true,
       name: true,
+      isOpen: true,
       slogan: true,
     },
     with: {
@@ -110,6 +112,8 @@ export const getTeamByName = async (name: string) => {
 
   return result;
 };
+
+export type TeamByName = Awaited<ReturnType<typeof getTeamByName>>;
 
 //
 export const getTeamMembersByOwner = async (id: number) => {

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import AdultCategory from '@/components/icons/AdultCategory';
 import { Badge } from '@/components/ui/badge';
 import { AllTeams } from '@8hourrelay/database';
 
@@ -24,13 +25,17 @@ function TeamItem({ team, ownerId }: { team: AllTeams[0]; ownerId: number }) {
 
       <div className="icon-container">
         <Link href={`/teams/${encodeURIComponent(name)}?raceId=${raceId}`}>
-          <img
-            src={
-              race?.name === 'Open' || race?.name === 'Master'
-                ? '/img/icon_adult.svg'
-                : '/img/icon_youth.svg'
-            }
-          />
+          {race.name === 'Open' ? (
+            <AdultCategory fill="red" />
+          ) : (
+            <img
+              src={
+                race?.name === 'Master'
+                  ? '/img/icon_adult.svg'
+                  : '/img/icon_youth.svg'
+              }
+            />
+          )}
         </Link>
       </div>
       <div className="team-text-container">

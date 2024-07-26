@@ -82,7 +82,7 @@ export function SelectTeam({
     startTransition(async () => {
       console.log('form submitted selected', selectedTeam);
       try {
-        if (selectedTeam) {
+        if (selectedTeam && roster) {
           await transferUserTeam(roster?.id, roster?.teamId, selectedTeam.id);
           toast.info('Transferred user to the new team');
           router.refresh();

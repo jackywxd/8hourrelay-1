@@ -42,12 +42,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { ShowSizeChart } from './ShowShirtSizeChart';
 
-const shirtSizeOptions = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'].map(
-  (m) => ({
-    value: m,
-    label: m,
-  })
-);
+const shirtSizeOptions = ['S', 'M', 'L', 'XL', '2XL', '3XL'].map((m) => ({
+  value: m,
+  label: m,
+}));
 const raceFormSchema = z.object({
   preferName: z.string().optional().nullable(),
   phone: z.string().min(1, { message: 'Phone number is required' }).regex(

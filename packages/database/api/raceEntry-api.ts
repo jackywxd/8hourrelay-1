@@ -19,7 +19,7 @@ import {
   updateRaceEntrySchema,
   updateRaceEntryToTeamsSchema,
 } from '../db';
-import { getTotalTeamsMembersById } from './team-api';
+import { getTotalTeamsMembersById, TeamById } from './team-api';
 
 export const createPaidRaceEntry = async (
   data: NewRaceEntry,
@@ -176,7 +176,7 @@ export const updateRaceEntry = async (
 
 export const transferRosterToNewTeam = async (
   id: number, // roster id to update
-  fromTeam: number, // team ID of the current team
+  currentTeam: TeamById, // team ID of the current team
   toTeam: number, // team ID of the new team
 ) => {
   await db.transaction(async (tx) => {
@@ -186,7 +186,7 @@ export const transferRosterToNewTeam = async (
     const validatedData = updateRaceEntryToTeamsSchema.parse({
       teamId: toTeam,
       raceOrder: count ? count + 1 : 1,
-      raceDuration: 20,
+      raceDuration: currentTeam.isOpen ? 40 : 20,
     });
     await tx
       .update(raceEntriesToTeamsTable)
@@ -197,7 +197,7 @@ export const transferRosterToNewTeam = async (
     // or the next select query will return the old roster
     await tx.execute(sql`commit`);
     // after transferred we need to reorder the current roster after the member is transferred
-    const currentRoster = await getRaceEntryRosterByTeamId(fromTeam); // already sorted by race order
+    const currentRoster = await getRaceEntryRosterByTeamId(currentTeam.id); // already sorted by race order
     let index = 1;
     for (const roster of currentRoster) {
       await tx

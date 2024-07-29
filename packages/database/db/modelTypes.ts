@@ -23,6 +23,7 @@ export const sizeEnum = [
   '2XL',
   '3XL',
 ] as const;
+
 export type SizeType = (typeof sizeEnum)[number];
 
 export type User = typeof schema.usersTable.$inferSelect; // return type when queried
@@ -50,6 +51,9 @@ export type NewEmailInvitation = z.infer<typeof insertEmailInvitationSchema>;
 
 export type PromoCode = typeof schema.promoCodesTable.$inferSelect;
 export type NewPromoCode = typeof schema.promoCodesTable.$inferInsert;
+
+export type Coupon = typeof schema.couponTable.$inferSelect;
+export type NewCoupon = typeof schema.couponTable.$inferInsert;
 
 export type Session = typeof schema.sessionsTable.$inferSelect;
 export type NewSession = typeof schema.sessionsTable.$inferInsert;

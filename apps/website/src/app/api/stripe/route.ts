@@ -1,6 +1,18 @@
 import { slackSendMsg } from '@/lib/slack';
 import { stripe } from '@/lib/stripe';
-import { db, paymentStatusTable, sessionsTable } from '@8hourrelay/database';
+import {
+  couponTable,
+  db,
+  insertCouponSchema,
+  insertPromoCodeSchema,
+  NewCoupon,
+  NewPromoCode,
+  NewSession,
+  paymentStatusTable,
+  promoCodesTable,
+  raceEntriesTable,
+  sessionsTable,
+} from '@8hourrelay/database';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
@@ -114,46 +126,49 @@ export async function POST(request: NextRequest) {
         const session = object as Stripe.Checkout.Session;
         const msg = `🔔  Session ${session.id} completed!`;
         const sessionId = session.id;
-        if (!session.payment_intent) {
-          throw new Error(`No payment Intent!!`);
-        }
-
         // retrieve checkout session from db and retrieve corresponding payment intent from stripe to check payment status
-        const [paymentSession, paymentIntent] = await Promise.all([
-          db.query.paymentStatusTable.findFirst({
-            where: eq(paymentStatusTable.sessionId, sessionId),
-            with: {
-              raceEntry: {
-                columns: {
-                  email: true,
-                },
-              },
-              user: {
-                columns: {
-                  email: true,
-                },
-              },
-              team: {
-                columns: {
-                  name: true,
-                },
+        let paymentIntent: Stripe.PaymentIntent;
+        const newSession: Partial<NewSession> = {
+          status: session.status as string,
+          paymentStatus: session.payment_status as string,
+          payload: session,
+          amount: session.amount_total as number,
+          currency: session.currency as string,
+          updatedAt: now,
+        };
+        const paymentSession = await db.query.paymentStatusTable.findFirst({
+          where: eq(paymentStatusTable.sessionId, sessionId),
+          with: {
+            raceEntry: {
+              columns: {
+                email: true,
               },
             },
-          }),
-          stripe.paymentIntents.retrieve(session.payment_intent as string),
-        ]);
+            user: {
+              columns: {
+                email: true,
+              },
+            },
+            team: {
+              columns: {
+                name: true,
+              },
+            },
+          },
+        });
+
+        // free cost session, no payment intent
+        if (session.payment_intent) {
+          paymentIntent = await stripe.paymentIntents.retrieve(
+            session.payment_intent as string
+          );
+          newSession.paymentIntentId = paymentIntent.id;
+        }
+
         console.log(`paymentSession`, paymentSession);
         await db
           .update(sessionsTable)
-          .set({
-            paymentIntentId: paymentIntent.id,
-            status: session.status as string,
-            paymentStatus: session.payment_status as string,
-            payload: session,
-            amount: session.amount_total as number,
-            currency: session.currency as string,
-            updatedAt: now,
-          })
+          .set(newSession)
           .where(eq(sessionsTable.sessionId, sessionId));
 
         if (paymentSession?.team) {
@@ -166,6 +181,102 @@ export async function POST(request: NextRequest) {
             `User ${paymentSession.user?.email} paid for race entry: ${paymentSession.raceEntry.email}!`
           );
         }
+        break;
+      }
+      case 'coupon.created': {
+        const coupon = object as Stripe.Coupon;
+        const msg = `🔔  The coupon ${coupon.id} created.`;
+        await slackSendMsg(msg);
+        const newCoupon = insertCouponSchema.parse({
+          id: coupon.id,
+          name: coupon.name,
+          amountOff: coupon.amount_off,
+          currency: coupon.currency,
+          percentOff: coupon.percent_off,
+          valid: coupon.valid,
+          timesRedeemed: coupon.times_redeemed,
+          duration: coupon.duration,
+          code: coupon.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        } as NewCoupon);
+        await db.insert(couponTable).values(newCoupon);
+        break;
+      }
+      case 'promotion_code.created': {
+        const promotionCode = object as Stripe.PromotionCode;
+        const msg = `🔔  The promotion code ${promotionCode.id} created.`;
+        await slackSendMsg(msg);
+        const newCode = insertPromoCodeSchema.parse({
+          promoCodeId: promotionCode.id,
+          code: promotionCode.code,
+          expiresAt: new Date((promotionCode.expires_at as number) * 1000),
+          maxUsage: promotionCode.max_redemptions,
+          isActive: promotionCode.active,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          couponId: promotionCode.coupon.id,
+        } as NewPromoCode);
+        await db.insert(promoCodesTable).values(newCode);
+        break;
+      }
+      case 'promotion_code.updated': {
+        const promotionCode = object as Stripe.PromotionCode;
+        const msg = `🔔  The promotion code ${promotionCode.id} updated.`;
+        await slackSendMsg(msg);
+        const newCode = {
+          maxUsage: promotionCode.max_redemptions,
+          isActive: promotionCode.active,
+          updatedAt: new Date(),
+        } as NewPromoCode;
+        await db
+          .update(promoCodesTable)
+          .set(newCode)
+          .where(eq(promoCodesTable.promoCodeId, promotionCode.id));
+        break;
+      }
+      case 'customer.discount.created': {
+        const discount = object as Stripe.Discount;
+        const msg = `🔔  The discount ${discount.id} created.`;
+        if (!discount.checkout_session) {
+          return;
+        }
+        await slackSendMsg(msg);
+        const [paymentSession] = await Promise.all([
+          db.query.paymentStatusTable.findFirst({
+            where: eq(paymentStatusTable.sessionId, discount.checkout_session),
+            with: {
+              raceEntry: {
+                columns: {
+                  id: true,
+                },
+              },
+              user: {
+                columns: {
+                  email: true,
+                  customerId: true,
+                },
+              },
+            },
+          }),
+        ]);
+
+        if (!paymentSession?.user || !paymentSession?.raceEntry) {
+          console.log(`No paymentSession for ${discount.checkout_session}`);
+          throw new Error('Invalid session');
+        }
+        if (paymentSession.user.customerId !== discount.customer) {
+          throw new Error('Invalid customer');
+        }
+
+        await db
+          .update(raceEntriesTable)
+          .set({
+            promoCodeId: discount.promotion_code as string,
+            updatedAt: new Date(),
+          })
+          .where(eq(raceEntriesTable.id, paymentSession?.raceEntry?.id));
+
         break;
       }
       default: {

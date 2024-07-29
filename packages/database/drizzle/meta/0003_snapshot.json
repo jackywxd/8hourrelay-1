@@ -1,0 +1,1396 @@
+{
+  "id": "282041f5-75fd-48b6-b126-20e8e6a01642",
+  "prevId": "ac0372df-aeb4-40f6-8d5d-08f885725174",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.8hourrelay_dev_coupons": {
+      "name": "8hourrelay_dev_coupons",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amountOff": {
+          "name": "amountOff",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "percentOff": {
+          "name": "percentOff",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "valid": {
+          "name": "valid",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "timesRedeemed": {
+          "name": "timesRedeemed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "duration": {
+          "name": "duration",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.8hourrelay_dev_emailInvitations": {
+      "name": "8hourrelay_dev_emailInvitations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "teamId": {
+          "name": "teamId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "8hourrelay_dev_emailInvitations_userId_8hourrelay_dev_users_id_fk": {
+          "name": "8hourrelay_dev_emailInvitations_userId_8hourrelay_dev_users_id_fk",
+          "tableFrom": "8hourrelay_dev_emailInvitations",
+          "tableTo": "8hourrelay_dev_users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_emailInvitations_teamId_8hourrelay_dev_teams_id_fk": {
+          "name": "8hourrelay_dev_emailInvitations_teamId_8hourrelay_dev_teams_id_fk",
+          "tableFrom": "8hourrelay_dev_emailInvitations",
+          "tableTo": "8hourrelay_dev_teams",
+          "columnsFrom": [
+            "teamId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "8hourrelay_dev_emailInvitations_email_unique": {
+          "name": "8hourrelay_dev_emailInvitations_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    },
+    "public.8hourrelay_dev_events": {
+      "name": "8hourrelay_dev_events",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "varchar(4)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time": {
+          "name": "time",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "registerDeadline": {
+          "name": "registerDeadline",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "8hourrelay_dev_events_year_unique": {
+          "name": "8hourrelay_dev_events_year_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "year"
+          ]
+        }
+      }
+    },
+    "public.8hourrelay_dev_messages": {
+      "name": "8hourrelay_dev_messages",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "response": {
+          "name": "response",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.8hourrelay_dev_paymentStatus": {
+      "name": "8hourrelay_dev_paymentStatus",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sessionId": {
+          "name": "sessionId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "teamId": {
+          "name": "teamId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raceEntryId": {
+          "name": "raceEntryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "8hourrelay_dev_paymentStatus_sessionId_8hourrelay_dev_stripeSessions_sessionId_fk": {
+          "name": "8hourrelay_dev_paymentStatus_sessionId_8hourrelay_dev_stripeSessions_sessionId_fk",
+          "tableFrom": "8hourrelay_dev_paymentStatus",
+          "tableTo": "8hourrelay_dev_stripeSessions",
+          "columnsFrom": [
+            "sessionId"
+          ],
+          "columnsTo": [
+            "sessionId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_paymentStatus_userId_8hourrelay_dev_users_id_fk": {
+          "name": "8hourrelay_dev_paymentStatus_userId_8hourrelay_dev_users_id_fk",
+          "tableFrom": "8hourrelay_dev_paymentStatus",
+          "tableTo": "8hourrelay_dev_users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_paymentStatus_teamId_8hourrelay_dev_teams_id_fk": {
+          "name": "8hourrelay_dev_paymentStatus_teamId_8hourrelay_dev_teams_id_fk",
+          "tableFrom": "8hourrelay_dev_paymentStatus",
+          "tableTo": "8hourrelay_dev_teams",
+          "columnsFrom": [
+            "teamId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_paymentStatus_raceEntryId_8hourrelay_dev_raceEntries_id_fk": {
+          "name": "8hourrelay_dev_paymentStatus_raceEntryId_8hourrelay_dev_raceEntries_id_fk",
+          "tableFrom": "8hourrelay_dev_paymentStatus",
+          "tableTo": "8hourrelay_dev_raceEntries",
+          "columnsFrom": [
+            "raceEntryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.8hourrelay_dev_promoCodes": {
+      "name": "8hourrelay_dev_promoCodes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "promoCodeId": {
+          "name": "promoCodeId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expiresAt": {
+          "name": "expiresAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "maxUsage": {
+          "name": "maxUsage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "couponId": {
+          "name": "couponId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "8hourrelay_dev_promoCodes_couponId_8hourrelay_dev_coupons_id_fk": {
+          "name": "8hourrelay_dev_promoCodes_couponId_8hourrelay_dev_coupons_id_fk",
+          "tableFrom": "8hourrelay_dev_promoCodes",
+          "tableTo": "8hourrelay_dev_coupons",
+          "columnsFrom": [
+            "couponId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "8hourrelay_dev_promoCodes_promoCodeId_unique": {
+          "name": "8hourrelay_dev_promoCodes_promoCodeId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "promoCodeId"
+          ]
+        },
+        "8hourrelay_dev_promoCodes_code_unique": {
+          "name": "8hourrelay_dev_promoCodes_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "code"
+          ]
+        },
+        "dev_unique_promo_code_id": {
+          "name": "dev_unique_promo_code_id",
+          "nullsNotDistinct": false,
+          "columns": [
+            "promoCodeId"
+          ]
+        }
+      }
+    },
+    "public.8hourrelay_dev_raceEntries": {
+      "name": "8hourrelay_dev_raceEntries",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "firstName": {
+          "name": "firstName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastName": {
+          "name": "lastName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "preferName": {
+          "name": "preferName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birthYear": {
+          "name": "birthYear",
+          "type": "varchar(4)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "personalBest": {
+          "name": "personalBest",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "varchar(4)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wechatId": {
+          "name": "wechatId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "isForOther": {
+          "name": "isForOther",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "size": {
+          "name": "size",
+          "type": "size_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emergencyName": {
+          "name": "emergencyName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emergencyPhone": {
+          "name": "emergencyPhone",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "medicalInfo": {
+          "name": "medicalInfo",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "teamPassword": {
+          "name": "teamPassword",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emailConsent": {
+          "name": "emailConsent",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "smsOptIn": {
+          "name": "smsOptIn",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "accepted": {
+          "name": "accepted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sessionId": {
+          "name": "sessionId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "promoCodeId": {
+          "name": "promoCodeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "8hourrelay_dev_raceEntries_userId_8hourrelay_dev_users_id_fk": {
+          "name": "8hourrelay_dev_raceEntries_userId_8hourrelay_dev_users_id_fk",
+          "tableFrom": "8hourrelay_dev_raceEntries",
+          "tableTo": "8hourrelay_dev_users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_raceEntries_sessionId_8hourrelay_dev_stripeSessions_sessionId_fk": {
+          "name": "8hourrelay_dev_raceEntries_sessionId_8hourrelay_dev_stripeSessions_sessionId_fk",
+          "tableFrom": "8hourrelay_dev_raceEntries",
+          "tableTo": "8hourrelay_dev_stripeSessions",
+          "columnsFrom": [
+            "sessionId"
+          ],
+          "columnsTo": [
+            "sessionId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_raceEntries_promoCodeId_8hourrelay_dev_promoCodes_id_fk": {
+          "name": "8hourrelay_dev_raceEntries_promoCodeId_8hourrelay_dev_promoCodes_id_fk",
+          "tableFrom": "8hourrelay_dev_raceEntries",
+          "tableTo": "8hourrelay_dev_promoCodes",
+          "columnsFrom": [
+            "promoCodeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.8hourrelay_dev_race_entries_to_teams": {
+      "name": "8hourrelay_dev_race_entries_to_teams",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "teamId": {
+          "name": "teamId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "raceEntryId": {
+          "name": "raceEntryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bib": {
+          "name": "bib",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raceOrder": {
+          "name": "raceOrder",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raceDuration": {
+          "name": "raceDuration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raceActualDistance": {
+          "name": "raceActualDistance",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raceAdjustedDistance": {
+          "name": "raceAdjustedDistance",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raceCoefficient": {
+          "name": "raceCoefficient",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raceStartTime": {
+          "name": "raceStartTime",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raceEndTime": {
+          "name": "raceEndTime",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "8hourrelay_dev_race_entries_to_teams_teamId_8hourrelay_dev_teams_id_fk": {
+          "name": "8hourrelay_dev_race_entries_to_teams_teamId_8hourrelay_dev_teams_id_fk",
+          "tableFrom": "8hourrelay_dev_race_entries_to_teams",
+          "tableTo": "8hourrelay_dev_teams",
+          "columnsFrom": [
+            "teamId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_race_entries_to_teams_raceEntryId_8hourrelay_dev_raceEntries_id_fk": {
+          "name": "8hourrelay_dev_race_entries_to_teams_raceEntryId_8hourrelay_dev_raceEntries_id_fk",
+          "tableFrom": "8hourrelay_dev_race_entries_to_teams",
+          "tableTo": "8hourrelay_dev_raceEntries",
+          "columnsFrom": [
+            "raceEntryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_race_entries_to_teams_userId_8hourrelay_dev_users_id_fk": {
+          "name": "8hourrelay_dev_race_entries_to_teams_userId_8hourrelay_dev_users_id_fk",
+          "tableFrom": "8hourrelay_dev_race_entries_to_teams",
+          "tableTo": "8hourrelay_dev_users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.8hourrelay_dev_races": {
+      "name": "8hourrelay_dev_races",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "varchar(4)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isCompetitive": {
+          "name": "isCompetitive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "entryFee": {
+          "name": "entryFee",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lowerAge": {
+          "name": "lowerAge",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "upperAge": {
+          "name": "upperAge",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "maxTeamSize": {
+          "name": "maxTeamSize",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "minFemale": {
+          "name": "minFemale",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lookupKey": {
+          "name": "lookupKey",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stripePrice": {
+          "name": "stripePrice",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "eventId": {
+          "name": "eventId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "8hourrelay_dev_races_eventId_8hourrelay_dev_events_id_fk": {
+          "name": "8hourrelay_dev_races_eventId_8hourrelay_dev_events_id_fk",
+          "tableFrom": "8hourrelay_dev_races",
+          "tableTo": "8hourrelay_dev_events",
+          "columnsFrom": [
+            "eventId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "dev_unique_year_name": {
+          "name": "dev_unique_year_name",
+          "nullsNotDistinct": false,
+          "columns": [
+            "year",
+            "name"
+          ]
+        }
+      }
+    },
+    "public.8hourrelay_dev_stripeSessions": {
+      "name": "8hourrelay_dev_stripeSessions",
+      "schema": "",
+      "columns": {
+        "sessionId": {
+          "name": "sessionId",
+          "type": "varchar(256)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "priceId": {
+          "name": "priceId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "productId": {
+          "name": "productId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "paymentIntentId": {
+          "name": "paymentIntentId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "paymentStatus": {
+          "name": "paymentStatus",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payload": {
+          "name": "payload",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "expiresAt": {
+          "name": "expiresAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "receiptNumber": {
+          "name": "receiptNumber",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "receiptUrl": {
+          "name": "receiptUrl",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.8hourrelay_dev_teams": {
+      "name": "8hourrelay_dev_teams",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "varchar(4)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "slogan": {
+          "name": "slogan",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "photoUrl": {
+          "name": "photoUrl",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isOpen": {
+          "name": "isOpen",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "state": {
+          "name": "state",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'PENDING'"
+        },
+        "captainId": {
+          "name": "captainId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "raceId": {
+          "name": "raceId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sessionId": {
+          "name": "sessionId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "name_index": {
+          "name": "name_index",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "8hourrelay_dev_teams_captainId_8hourrelay_dev_users_id_fk": {
+          "name": "8hourrelay_dev_teams_captainId_8hourrelay_dev_users_id_fk",
+          "tableFrom": "8hourrelay_dev_teams",
+          "tableTo": "8hourrelay_dev_users",
+          "columnsFrom": [
+            "captainId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_teams_userId_8hourrelay_dev_users_id_fk": {
+          "name": "8hourrelay_dev_teams_userId_8hourrelay_dev_users_id_fk",
+          "tableFrom": "8hourrelay_dev_teams",
+          "tableTo": "8hourrelay_dev_users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_teams_raceId_8hourrelay_dev_races_id_fk": {
+          "name": "8hourrelay_dev_teams_raceId_8hourrelay_dev_races_id_fk",
+          "tableFrom": "8hourrelay_dev_teams",
+          "tableTo": "8hourrelay_dev_races",
+          "columnsFrom": [
+            "raceId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "8hourrelay_dev_teams_sessionId_8hourrelay_dev_stripeSessions_sessionId_fk": {
+          "name": "8hourrelay_dev_teams_sessionId_8hourrelay_dev_stripeSessions_sessionId_fk",
+          "tableFrom": "8hourrelay_dev_teams",
+          "tableTo": "8hourrelay_dev_stripeSessions",
+          "columnsFrom": [
+            "sessionId"
+          ],
+          "columnsTo": [
+            "sessionId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "dev_unique_year_team_name": {
+          "name": "dev_unique_year_team_name",
+          "nullsNotDistinct": false,
+          "columns": [
+            "year",
+            "name"
+          ]
+        },
+        "dev_unique_year_user": {
+          "name": "dev_unique_year_user",
+          "nullsNotDistinct": false,
+          "columns": [
+            "year",
+            "userId"
+          ]
+        }
+      }
+    },
+    "public.8hourrelay_dev_users": {
+      "name": "8hourrelay_dev_users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uid": {
+          "name": "uid",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "firstName": {
+          "name": "firstName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lastName": {
+          "name": "lastName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "preferName": {
+          "name": "preferName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wechatId": {
+          "name": "wechatId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birthYear": {
+          "name": "birthYear",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "personalBest": {
+          "name": "personalBest",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avatarUrl": {
+          "name": "avatarUrl",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customerId": {
+          "name": "customerId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "uid_index": {
+          "name": "uid_index",
+          "columns": [
+            {
+              "expression": "uid",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "email_index": {
+          "name": "email_index",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "8hourrelay_dev_users_uid_unique": {
+          "name": "8hourrelay_dev_users_uid_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "uid"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {
+    "public.gender_type": {
+      "name": "gender_type",
+      "schema": "public",
+      "values": [
+        "Male",
+        "Female"
+      ]
+    },
+    "public.size_type": {
+      "name": "size_type",
+      "schema": "public",
+      "values": [
+        "2XS",
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL",
+        "3XL"
+      ]
+    },
+    "public.user_role": {
+      "name": "user_role",
+      "schema": "public",
+      "values": [
+        "admin",
+        "captain",
+        "member"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

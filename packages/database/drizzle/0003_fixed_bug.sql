@@ -1,0 +1,2 @@
+ALTER TABLE "8hourrelay_dev_promoCodes" ADD CONSTRAINT "8hourrelay_dev_promoCodes_promoCodeId_unique" UNIQUE("promoCodeId");--> statement-breakpoint
+ALTER TABLE "8hourrelay_dev_promoCodes" ADD CONSTRAINT "dev_unique_promo_code_id" UNIQUE("promoCodeId");

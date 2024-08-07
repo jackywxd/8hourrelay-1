@@ -143,10 +143,8 @@ export const getTeamMembersByOwner = async (id: number) => {
   if (!result) return null;
   const team = selectTeamSchema.parse(result);
   const race = selectRaceSchema.parse(result.race);
-  const raceEntries = result.raceEntriesToTeams.map((r) =>
-    r.raceEntry && r.raceEntry.session.paymentStatus === 'paid'
-      ? r.raceEntry
-      : null,
+  const raceEntries = result.raceEntriesToTeams.filter(
+    (r) => r.raceEntry && r.raceEntry.session.paymentStatus === 'paid',
   );
   return {
     ...team,

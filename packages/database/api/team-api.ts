@@ -143,15 +143,17 @@ export const getTeamMembersByOwner = async (id: number) => {
   if (!result) return null;
   const team = selectTeamSchema.parse(result);
   const race = selectRaceSchema.parse(result.race);
-  const raceEntries = result.raceEntriesToTeams.filter(
-    (r) => r.raceEntry && r.raceEntry.session.paymentStatus === 'paid',
-  );
+  const raceEntries = result.raceEntriesToTeams
+    .map((r) => r.raceEntry)
+    .filter((r) => r.session?.paymentStatus === 'paid');
   return {
     ...team,
     race,
     payment: result.session,
     raceEntries: raceEntries,
-    raceEntriesToTeams: result.raceEntriesToTeams,
+    raceEntriesToTeams: result.raceEntriesToTeams.filter(
+      (r) => r?.raceEntry?.session?.paymentStatus === 'paid',
+    ),
   };
 };
 

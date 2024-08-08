@@ -41,17 +41,23 @@ export function SelectTeam({
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [pending, startTransition] = useTransition();
   // Doesn't make sense to transfer to the same team
-  const filteredTeams = teams.filter((team) => {
-    // if selected roster team race has an upper age (youth), should only return teams lowerAge larger than that
-    if (roster?.team?.race?.upperAge && team.race?.lowerAge) {
-      return (
-        team.id !== roster?.teamId &&
-        team.race?.lowerAge > roster?.team?.race?.upperAge
-      );
-    }
-    // for adult team member, return teams with no upper age
-    return team.id !== roster?.teamId && !team.race?.upperAge;
-  });
+  const filteredTeams = teams
+    .filter(
+      (t) =>
+        t.race.isCompetitive !== true || // all master or youth team
+        (t.session && t.session.status === 'complete')
+    ) // open team with completed payment)
+    .filter((team) => {
+      // if selected roster team race has an upper age (youth), should only return teams lowerAge larger than that
+      if (roster?.team?.race?.upperAge && team.race?.lowerAge) {
+        return (
+          team.id !== roster?.teamId &&
+          team.race?.lowerAge > roster?.team?.race?.upperAge
+        );
+      }
+      // for adult team member, return teams with no upper age
+      return team.id !== roster?.teamId && !team.race?.upperAge;
+    });
   const passwordFormSchema = z.object({
     password: z
       .string()

@@ -9,7 +9,7 @@ import ShareButtons from './ShareButtons';
 export default async function TeamPage({ team }: { team: TeamByName }) {
   const ogUrl = getTeamLogoUrl(team);
   console.log(`ogUrl`, ogUrl);
-  const shareUrl = `${process.env.NEXT_PUBLIC_HOST_NAME}/teams/${encodeURIComponent(team.name)}`;
+  const shareUrl = `${process.env.NEXT_PUBLIC_HOST_NAME}/teams/${encodeURIComponent(team?.name ?? '')}`;
   return (
     <>
       <div className="flex w-full flex-col md:ml-5 md:pt-5">

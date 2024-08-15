@@ -100,6 +100,13 @@ export const getTeamByName = async (name: string) => {
         columns: {
           userId: true,
         },
+        with: {
+          raceEntry: {
+            with: {
+              session: true,
+            },
+          },
+        },
       },
       captain: {
         columns: {
@@ -110,7 +117,13 @@ export const getTeamByName = async (name: string) => {
   });
   console.log(`getTeamByName result`, result);
 
-  return result;
+  const raceEntries = result?.raceEntriesToTeams.filter(
+    (r) => r.raceEntry?.session?.paymentStatus === 'paid',
+  );
+  return {
+    ...result,
+    raceEntriesToTeams: raceEntries,
+  };
 };
 
 export type TeamByName = Awaited<ReturnType<typeof getTeamByName>>;

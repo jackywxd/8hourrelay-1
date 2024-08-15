@@ -19,7 +19,7 @@ async function MyRacePage({
               <span>Name</span>
               <span>Email</span>
               <span className="hidden md:block">Team</span>
-              <span className="hidden md:block">Payment</span>
+              <span className="md:block">Payment</span>
             </div>
             <RaceEntriesList raceEntries={raceEntries} />
           </CardContent>

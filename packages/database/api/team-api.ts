@@ -117,13 +117,18 @@ export const getTeamByName = async (name: string) => {
   });
   console.log(`getTeamByName result`, result);
 
-  const raceEntries = result?.raceEntriesToTeams.filter(
-    (r) => r.raceEntry?.session?.paymentStatus === 'paid',
-  );
-  return {
-    ...result,
-    raceEntriesToTeams: raceEntries,
-  };
+  // only filter when result is presented
+  if (result) {
+    const raceEntries = result.raceEntriesToTeams.filter(
+      (r) => r.raceEntry?.session?.paymentStatus === 'paid',
+    );
+    return {
+      ...result,
+      raceEntriesToTeams: raceEntries,
+    };
+  } else {
+    return undefined;
+  }
 };
 
 export type TeamByName = Awaited<ReturnType<typeof getTeamByName>>;

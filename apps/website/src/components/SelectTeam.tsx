@@ -52,7 +52,8 @@ export function SelectTeam({
       if (roster?.team?.race?.upperAge && team.race?.lowerAge) {
         return (
           team.id !== roster?.teamId &&
-          team.race?.lowerAge > roster?.team?.race?.upperAge
+          team.race.lowerAge === roster.team.race.lowerAge &&
+          team.race.upperAge === roster.team.race.upperAge
         );
       }
       // for adult team member, return teams with no upper age

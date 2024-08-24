@@ -3,8 +3,8 @@ import { Reorder } from 'framer-motion';
 import { useEffect, useMemo, useState, useTransition } from 'react';
 
 import { updateTeamRoster } from '@/actions/raceEntryActions';
+import { IUserTeam } from '@/actions/userActions';
 import { Button } from '@/components/ui/button';
-import { Race, RaceEntry, Roster } from '@8hourrelay/database';
 import { useRouter } from 'next/navigation';
 import { RaceEntryItem } from './RaceEntryItem';
 
@@ -13,9 +13,9 @@ export function RaceEntriesList({
   raceEntries,
   roster,
 }: {
-  race: Race;
-  raceEntries: RaceEntry[];
-  roster: Roster[];
+  race: NonNullable<IUserTeam>['race'];
+  raceEntries: NonNullable<IUserTeam>['raceEntries'];
+  roster: NonNullable<IUserTeam>['raceEntriesToTeams'];
 }) {
   // console.log(roster);
   const router = useRouter();

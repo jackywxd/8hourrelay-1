@@ -9,6 +9,7 @@ import {
   NewSession,
   NewTeam,
   paymentStatusTable,
+  raceEntriesTable,
   raceEntriesToTeamsTable,
   racesTable,
   selectRaceSchema,
@@ -120,7 +121,9 @@ export const getTeamByName = async (name: string) => {
   // only filter when result is presented
   if (result) {
     const raceEntries = result.raceEntriesToTeams.filter(
-      (r) => r.raceEntry?.session?.paymentStatus === 'paid',
+      (r) =>
+        r.raceEntry?.session?.paymentStatus === 'paid' &&
+        r.raceEntry.isActive === true,
     );
     return {
       ...result,
@@ -163,7 +166,7 @@ export const getTeamMembersByOwner = async (id: number) => {
   const race = selectRaceSchema.parse(result.race);
   const raceEntries = result.raceEntriesToTeams
     .map((r) => r.raceEntry)
-    .filter((r) => r.session?.paymentStatus === 'paid');
+    .filter((r) => r.session?.paymentStatus === 'paid' && r.isActive === true);
   return {
     ...team,
     race,
@@ -264,6 +267,13 @@ export const getTotalTeamsMembersById = async (
   const result = await db
     .select({ value: count() })
     .from(raceEntriesToTeamsTable)
+    .leftJoin(
+      raceEntriesTable,
+      and(
+        eq(raceEntriesToTeamsTable.raceEntryId, raceEntriesTable.id),
+        eq(raceEntriesTable.isActive, true),
+      ),
+    )
     .where(eq(raceEntriesToTeamsTable.teamId, id));
   return result[0].value;
 };

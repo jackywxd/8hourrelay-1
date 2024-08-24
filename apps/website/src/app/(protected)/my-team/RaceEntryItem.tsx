@@ -12,7 +12,7 @@ export const RaceEntryItem = ({
   raceEntry: Partial<RaceEntry & Race>;
   roster: Roster;
 }) => {
-  if (!raceEntry) return null;
+  if (!raceEntry || !roster) return null;
   const race = raceEntry;
   return (
     <div className="group relative mt-3 flex items-center gap-5 rounded-lg bg-muted px-2 py-4 shadow-md transition hover:bg-accent hover:text-accent-foreground focus:outline-none aria-checked:border-indigo-500 aria-checked:ring-1 aria-checked:ring-indigo-500 aria-checked:ring-offset-1">
@@ -36,15 +36,15 @@ export const RaceEntryItem = ({
             </div>
           </div>
           <span className="text-left text-sm md:w-1/3">
-            Bib: {roster.bib ?? 'N/A'}
+            Bib: {roster?.bib ?? 'N/A'}
           </span>
           <span className="text-left text-sm">
-            Allocated Time: {roster.raceDuration ?? 'N/A'}
+            Allocated Time: {roster?.raceDuration ?? 'N/A'}
           </span>
         </div>
         <div className="flex gap-3">
           {!race.isCompetitive && (
-            <Link href={`/my-team/roster/${roster.id}?action=edit`}>
+            <Link href={`/my-team/roster/${roster?.id}?action=edit`}>
               <MdEdit size={24} />
             </Link>
           )}

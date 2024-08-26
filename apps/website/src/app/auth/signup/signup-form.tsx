@@ -79,7 +79,7 @@ const SignUpForm = () => {
         setUser(null);
 
         toast.success(
-          t('FormMessage.you_have_successfully_registered_as_a_member')
+          t('FormMessage.email_has_sent', { email: formValues?.email })
         );
 
         router.refresh();

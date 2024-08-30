@@ -37,7 +37,7 @@ export default function MarkCalendarSection() {
         </div>
         <div className="event-info-item">
           <div className="label">Entry Deadline</div>
-          <div className="value">Aug 25, 2024</div>
+          <div className="value">Aug 31, 2024</div>
         </div>
       </section>
     </section>

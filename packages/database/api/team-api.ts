@@ -173,7 +173,9 @@ export const getTeamMembersByOwner = async (id: number) => {
     payment: result.session,
     raceEntries: raceEntries,
     raceEntriesToTeams: result.raceEntriesToTeams.filter(
-      (r) => r?.raceEntry?.session?.paymentStatus === 'paid',
+      (r) =>
+        r?.raceEntry?.session?.paymentStatus === 'paid' &&
+        r?.raceEntry?.isActive === true,
     ),
   };
 };

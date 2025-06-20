@@ -2,8 +2,9 @@
 import { useRouter } from 'next/navigation';
 import { useMemo, useTransition } from 'react';
 
-import { Race, RaceEntry, Roster } from '@8hourrelay/database';
+import { Roster } from '@8hourrelay/database';
 
+import { IUserTeam } from '@/actions/userActions';
 import { columns } from './_components/columns';
 import { DataTable } from './_components/data-table';
 
@@ -12,9 +13,9 @@ export function RaceEntriesTable({
   raceEntries,
   roster,
 }: {
-  race: Race;
-  raceEntries: RaceEntry[];
-  roster: Roster[];
+  race: NonNullable<IUserTeam>['race'];
+  raceEntries: NonNullable<IUserTeam>['raceEntries'];
+  roster: NonNullable<IUserTeam>['raceEntriesToTeams'];
 }) {
   // console.log(roster);
   const router = useRouter();

@@ -236,7 +236,9 @@ export const raceEntriesTable = createTable('raceEntries', {
     .references(() => sessionsTable.sessionId),
 
   // it could be null when there is no promo code
-  promoCodeId: integer('promoCodeId').references(() => promoCodesTable.id),
+  promoCodeId: varchar('promoCodeId').references(
+    () => promoCodesTable.promoCodeId,
+  ),
 });
 
 export const sessionsTable = createTable('stripeSessions', {
@@ -278,15 +280,31 @@ export const paymentStatusTable = createTable('paymentStatus', {
   }),
 });
 
-export const promoCodesTable = createTable('promoCodes', {
-  id: serial('id').primaryKey(),
-  code: varchar('code', { length: 256 }).notNull().unique(),
-  discount: integer('discount').notNull(),
-  expiresAt: timestamp('expiresAt').notNull(),
-  maxUsage: integer('maxUsage').notNull(),
-  isActive: boolean('isActive').notNull().default(true), // whether this promo code is active
-  apiId: varchar('apiId', { length: 256 }), // stripe coupon promo code api id
-});
+export const promoCodesTable = createTable(
+  'promoCodes',
+  {
+    id: serial('id').primaryKey(),
+    promoCodeId: varchar('promoCodeId', { length: 256 }).unique().notNull(),
+    code: varchar('code', { length: 256 }).notNull().unique(),
+    expiresAt: timestamp('expiresAt').notNull(),
+    maxUsage: integer('maxUsage').notNull(),
+    isActive: boolean('isActive').notNull().default(true), // whether this promo code is active
+    createdAt: timestamp('createdAt')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp('updatedAt')
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    couponId: varchar('couponId', { length: 256 }).references(
+      () => couponTable.id,
+    ),
+  },
+  (table) => ({
+    uniquePromoCodeId: unique(`${stage}_unique_promo_code_id`).on(
+      table.promoCodeId,
+    ),
+  }),
+);
 
 export const messagesTable = createTable('messages', {
   id: serial('id').primaryKey(),
@@ -294,6 +312,20 @@ export const messagesTable = createTable('messages', {
   name: varchar('name', { length: 256 }).notNull(),
   message: varchar('message', { length: 1024 }).notNull(),
   response: json('response'),
+  createdAt: timestamp('createdAt')
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const couponTable = createTable('coupons', {
+  id: varchar('id').primaryKey(),
+  name: varchar('name', { length: 256 }).notNull(),
+  amountOff: integer('amountOff'),
+  currency: varchar('currency', { length: 10 }),
+  percentOff: integer('percentOff'),
+  valid: boolean('valid').notNull().default(true),
+  timesRedeemed: integer('timesRedeemed').notNull().default(0),
+  duration: varchar('duration', { length: 256 }),
   createdAt: timestamp('createdAt')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
@@ -372,7 +404,7 @@ export const raceEntriesRelations = relations(
     }),
     promoCode: one(promoCodesTable, {
       fields: [raceEntriesTable.promoCodeId],
-      references: [promoCodesTable.id],
+      references: [promoCodesTable.promoCodeId],
     }),
     raceEntriesToTeams: many(raceEntriesToTeamsTable),
     payments: many(paymentStatusTable),
@@ -422,6 +454,21 @@ export const paymentStatusRelations = relations(
     }),
   }),
 );
+
+export const promoCodesRelations = relations(
+  promoCodesTable,
+  ({ one, many }) => ({
+    coupon: one(couponTable, {
+      fields: [promoCodesTable.couponId],
+      references: [couponTable.id],
+    }),
+    racesEntries: many(raceEntriesTable),
+  }),
+);
+
+export const couponRelations = relations(couponTable, ({ many }) => ({
+  promoCodes: many(promoCodesTable),
+}));
 
 //////////////////////////// ZOD SCHEMAS /////////////////////////////
 
@@ -510,6 +557,9 @@ export const insertEmailInvitationUpdateSchema = createInsertSchema(
 
 export const insertPromoCodeSchema = createInsertSchema(promoCodesTable);
 export const selectPromoCodeSchema = createSelectSchema(promoCodesTable);
+
+export const insertCouponSchema = createInsertSchema(couponTable);
+export const selectCouponSchema = createSelectSchema(couponTable);
 
 export const insertSessionSchema = createInsertSchema(sessionsTable);
 export const selectSessionSchema = createSelectSchema(sessionsTable);

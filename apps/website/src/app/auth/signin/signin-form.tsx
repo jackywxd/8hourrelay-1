@@ -77,11 +77,8 @@ const SignInForm = () => {
         router.replace(next);
       } catch (e: unknown) {
         const err = (e as Error)?.message;
-        if (err.startsWith('Invalid login credentials')) {
-          toast.error(t('FormMessage.invalid_login_credentials'));
-        } else {
-          toast.error(err);
-        }
+        console.error(err);
+        toast.error(t('FormMessage.invalid_login_credentials'));
       }
     });
   }

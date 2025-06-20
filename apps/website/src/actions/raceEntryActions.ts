@@ -239,7 +239,7 @@ export const transferUserTeam = async (
     // after transferred, we need to update the race order in the current team
     // no need to update the race order in the new team
 
-    await transferRosterToNewTeam(id, fromTeam, toTeam);
+    await transferRosterToNewTeam(id, currentTeam, toTeam);
 
     // await transferTeam(id, user.id, fromTeam, toTeam);
     revalidatePath('/my-team');

@@ -14,8 +14,8 @@ __metadata:
     "@slack/web-api": "npm:^7.2.0"
     "@slack/webhook": "npm:^7.0.2"
     "@vercel/postgres": "npm:^0.9.0"
-    drizzle-kit: "npm:^0.22.7"
-    drizzle-orm: "npm:^0.31.2"
+    drizzle-kit: "npm:^0.23.2"
+    drizzle-orm: "npm:^0.32.2"
     drizzle-zod: "npm:^0.5.1"
     pg: "npm:^8.12.0"
     postgres: "npm:^3.4.4"
@@ -88,6 +88,13 @@ __metadata:
     dotenvx: src/cli/dotenvx.js
     git-dotenvx: src/cli/dotenvx.js
   checksum: 10/896f14915ef2323bbe0a92574de3fa308a8308e0cdcdfef87bb8e3a7b44e70f72c2c83eeb36320ad08209507cce5f008924b5135589ccafd4b3d23e8ccfce1e4
+  languageName: node
+  linkType: hard
+
+"@drizzle-team/brocli@npm:^0.8.2":
+  version: 0.8.2
+  resolution: "@drizzle-team/brocli@npm:0.8.2"
+  checksum: 10/0a308646cb033d1dca7e50054a895b4ce719fab20a4c12bbdf0679d2b57b3e7368a0b8fe3a5988a322eb984ce3bf97fa99e98bf770003aa82c3dff44d7c8f629
   languageName: node
   linkType: hard
 
@@ -3952,22 +3959,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"drizzle-kit@npm:^0.22.7":
-  version: 0.22.7
-  resolution: "drizzle-kit@npm:0.22.7"
+"drizzle-kit@npm:^0.23.2":
+  version: 0.23.2
+  resolution: "drizzle-kit@npm:0.23.2"
   dependencies:
+    "@drizzle-team/brocli": "npm:^0.8.2"
     "@esbuild-kit/esm-loader": "npm:^2.5.5"
     esbuild: "npm:^0.19.7"
     esbuild-register: "npm:^3.5.0"
   bin:
     drizzle-kit: bin.cjs
-  checksum: 10/3952a1be314f722653236b40c7a81ad786c4fb2bf833f6b38d68d3e5f9d8e0a863d9d849f3a87ecfd8dd8118ac84469d68b00530b7fe9d950106edff487c6aa5
+  checksum: 10/c29c834b6b198a9b522b6228f11b9062e9e7d4e0f4dd2f682e7367bee20f2ba8eafa841fdd616db2da1a1fb1742c7302f06f58d880bf20e3ad0631f3357a0b7f
   languageName: node
   linkType: hard
 
-"drizzle-orm@npm:^0.31.2":
-  version: 0.31.2
-  resolution: "drizzle-orm@npm:0.31.2"
+"drizzle-orm@npm:^0.32.2":
+  version: 0.32.2
+  resolution: "drizzle-orm@npm:0.32.2"
   peerDependencies:
     "@aws-sdk/client-rds-data": ">=3"
     "@cloudflare/workers-types": ">=3"
@@ -3977,6 +3985,7 @@ __metadata:
     "@op-engineering/op-sqlite": ">=2"
     "@opentelemetry/api": ^1.4.1
     "@planetscale/database": ">=1"
+    "@prisma/client": "*"
     "@tidbcloud/serverless": "*"
     "@types/better-sqlite3": "*"
     "@types/pg": "*"
@@ -4012,6 +4021,8 @@ __metadata:
       optional: true
     "@planetscale/database":
       optional: true
+    "@prisma/client":
+      optional: true
     "@tidbcloud/serverless":
       optional: true
     "@types/better-sqlite3":
@@ -4042,13 +4053,15 @@ __metadata:
       optional: true
     postgres:
       optional: true
+    prisma:
+      optional: true
     react:
       optional: true
     sql.js:
       optional: true
     sqlite3:
       optional: true
-  checksum: 10/dfbcd80c303c441c6e1f70a9ae2d410c80eed6f0647017c791ddf5b9077513560c27df427183218006b593032b0bdd5d8322c44906092a15c9f0341317a375d3
+  checksum: 10/9fd2ac5d58b63472cffd2ba105ca408c803a651d27803a9a9082757e08c086b67a5c1a41698e3ee2ef4d1e4ab9b03e6fa78498675eca05ef7d26f9c3455fd148
   languageName: node
   linkType: hard
 
@@ -9185,8 +9198,8 @@ __metadata:
     clsx: "npm:^2.1.1"
     cmdk: "npm:^1.0.0"
     dayjs: "npm:^1.11.11"
-    drizzle-kit: "npm:^0.22.7"
-    drizzle-orm: "npm:^0.31.2"
+    drizzle-kit: "npm:^0.23.2"
+    drizzle-orm: "npm:^0.32.2"
     env-cmd: "npm:^10.1.0"
     eslint: "npm:^9.5.0"
     eslint-config-next: "npm:14.2.4"

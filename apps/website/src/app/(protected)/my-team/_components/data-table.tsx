@@ -21,7 +21,6 @@ import {
   getFacetedUniqueValues,
   getFilteredRowModel,
   getGroupedRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   RowData,
   SortingState,
@@ -70,7 +69,6 @@ export function DataTable<TData, TValue>({
     enableGrouping: true,
     getCoreRowModel: getCoreRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -84,6 +82,11 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       columnFilters,
     },
+    // manually set pagination to only show 1 page
+    showPagination: false,
+    manualPagination: true,
+    rowCount: data.length,
+    pageCount: 1,
     // Provide our updateData function to our table meta
     meta: {
       editedRows,

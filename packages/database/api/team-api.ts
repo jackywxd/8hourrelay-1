@@ -9,6 +9,7 @@ import {
   NewSession,
   NewTeam,
   paymentStatusTable,
+  raceEntriesTable,
   raceEntriesToTeamsTable,
   racesTable,
   selectRaceSchema,
@@ -84,7 +85,9 @@ export const getTeamByName = async (name: string) => {
   const result = await db.query.teamsTable.findFirst({
     where: and(eq(teamsTable.name, name), eq(teamsTable.year, year)),
     columns: {
+      id: true,
       name: true,
+      isOpen: true,
       slogan: true,
     },
     with: {
@@ -98,6 +101,13 @@ export const getTeamByName = async (name: string) => {
         columns: {
           userId: true,
         },
+        with: {
+          raceEntry: {
+            with: {
+              session: true,
+            },
+          },
+        },
       },
       captain: {
         columns: {
@@ -108,8 +118,23 @@ export const getTeamByName = async (name: string) => {
   });
   console.log(`getTeamByName result`, result);
 
-  return result;
+  // only filter when result is presented
+  if (result) {
+    const raceEntries = result.raceEntriesToTeams.filter(
+      (r) =>
+        r.raceEntry?.session?.paymentStatus === 'paid' &&
+        r.raceEntry.isActive === true,
+    );
+    return {
+      ...result,
+      raceEntriesToTeams: raceEntries,
+    };
+  } else {
+    return undefined;
+  }
 };
+
+export type TeamByName = Awaited<ReturnType<typeof getTeamByName>>;
 
 //
 export const getTeamMembersByOwner = async (id: number) => {
@@ -126,7 +151,11 @@ export const getTeamMembersByOwner = async (id: number) => {
       },
       raceEntriesToTeams: {
         with: {
-          raceEntry: true,
+          raceEntry: {
+            with: {
+              session: true,
+            },
+          },
         },
       },
     },
@@ -135,13 +164,19 @@ export const getTeamMembersByOwner = async (id: number) => {
   if (!result) return null;
   const team = selectTeamSchema.parse(result);
   const race = selectRaceSchema.parse(result.race);
-  const raceEntries = result.raceEntriesToTeams.map((r) => r.raceEntry);
+  const raceEntries = result.raceEntriesToTeams
+    .map((r) => r.raceEntry)
+    .filter((r) => r.session?.paymentStatus === 'paid' && r.isActive === true);
   return {
     ...team,
     race,
     payment: result.session,
     raceEntries: raceEntries,
-    raceEntriesToTeams: result.raceEntriesToTeams,
+    raceEntriesToTeams: result.raceEntriesToTeams.filter(
+      (r) =>
+        r?.raceEntry?.session?.paymentStatus === 'paid' &&
+        r?.raceEntry?.isActive === true,
+    ),
   };
 };
 
@@ -234,6 +269,13 @@ export const getTotalTeamsMembersById = async (
   const result = await db
     .select({ value: count() })
     .from(raceEntriesToTeamsTable)
+    .leftJoin(
+      raceEntriesTable,
+      and(
+        eq(raceEntriesToTeamsTable.raceEntryId, raceEntriesTable.id),
+        eq(raceEntriesTable.isActive, true),
+      ),
+    )
     .where(eq(raceEntriesToTeamsTable.teamId, id));
   return result[0].value;
 };

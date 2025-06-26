@@ -1,1 +1,0 @@
-ALTER TABLE "8hourrelay_dev_promoCodes" DROP COLUMN IF EXISTS "discount";

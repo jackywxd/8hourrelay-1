@@ -6,17 +6,17 @@ import {
   racesTable,
 } from './schema';
 
-const year = '2024';
+const year = '2025';
 
 const event2024 = {
   year,
   name: `8HourRelay`,
-  description: `8 Hour Relay Race - 2024`,
-  location: 'South Surrey Athletic Park, British Columbia',
-  time: 'Sep 7, 2024',
+  description: `8 Hour Relay Race - 2025`,
+  location: 'Swangard Stadium, Burnaby, British Columbia',
+  time: 'Sep 13, 2025',
   isActive: true,
   createdAt: new Date(),
-  registerDeadline: 'August 25, 2024',
+  registerDeadline: 'August 31, 2025',
 };
 const races: NewRace[] = [
   {
@@ -39,17 +39,6 @@ const races: NewRace[] = [
     isCompetitive: false,
     lowerAge: 18,
     lookupKey: 'master_entry_fee',
-  },
-  {
-    year,
-    name: 'Youth',
-    description: '4 Hour Youth Relay',
-    entryFee: 20,
-    isCompetitive: false,
-    maxTeamSize: 24,
-    lowerAge: 10,
-    upperAge: 18,
-    lookupKey: 'youth_entry_fee',
   },
 ];
 const seeds = async () => {

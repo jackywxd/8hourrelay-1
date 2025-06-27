@@ -2,7 +2,7 @@ export default function MarkCalendarSection() {
   return (
     <section className="mark-calendar">
       <div className="landing-section-title">Mark Your Calendar</div>
-      <section className="content-container large">
+      <section className="content-container large container">
         <div className="event-info-item entry-fee">
           <div className="label">Entry Fee</div>
           <div className="fee-container">

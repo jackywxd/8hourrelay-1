@@ -9,20 +9,20 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@fast-csv/parse": "^5.0.0",
-    "@slack/web-api": "^7.2.0",
-    "@slack/webhook": "^7.0.2",
-    "@vercel/postgres": "^0.9.0",
-    "drizzle-orm": "^0.32.2",
-    "drizzle-zod": "^0.5.1",
-    "postgres": "^3.4.4",
+    "@fast-csv/parse": "^5.0.2",
+    "@slack/web-api": "^7.9.3",
+    "@slack/webhook": "^7.0.5",
+    "@vercel/postgres": "^0.10.0",
+    "drizzle-orm": "^0.44.2",
+    "drizzle-zod": "^0.8.2",
+    "postgres": "^3.4.7",
     "server-only": "^0.0.1",
-    "stripe": "^15.12.0"
+    "stripe": "^18.2.1"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "^1.0.0",
-    "drizzle-kit": "^0.23.2",
-    "pg": "^8.12.0",
-    "tsx": "^4.15.7"
+    "@dotenvx/dotenvx": "^1.45.1",
+    "drizzle-kit": "^0.31.4",
+    "pg": "^8.16.3",
+    "tsx": "^4.20.3"
   }
 }

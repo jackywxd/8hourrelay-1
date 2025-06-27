@@ -1,30 +1,24 @@
+import type { Viewport } from 'next';
 import { Inter as FontSans } from 'next/font/google';
 import localFont from 'next/font/local';
-import type { Viewport } from 'next';
-import dynamic from 'next/dynamic';
 import NextTopLoader from 'nextjs-toploader';
 
-import '@/styles/globals.css';
-import { siteConfig } from '@/config/site';
 import { Toaster } from '@/components/ui/sonner';
-import { defaultLng } from '@/i18next.config';
+import { siteConfig } from '@/config/site';
 import { AppProvider } from '@/context/app-provider';
+import { defaultLng } from '@/i18next.config';
+import '@/styles/globals.css';
+import '@/styles/style.css';
 
-import { cn } from '@/lib/utils';
-import GoogleAnalytics from '@/components/GoogleAnalytics';
-import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { Analytics } from '@/components/analytics';
-
-const PostHogPageView = dynamic(() => import('@/components/PostHogPageView'), {
-  ssr: false,
-});
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import PostHogWrapper from '@/components/PostHogWrapper';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
+import { cn } from '@/lib/utils';
 
 const ogUrl = new URL(`${process.env.NEXT_PUBLIC_HOST_NAME}api/og`);
 
-const fontSans = FontSans({
-  subsets: ['latin'],
-  variable: '--font-sans',
-});
+const fontSans = FontSans({ subsets: ['latin'], variable: '--font-sans' });
 
 // Font files can be colocated inside of `pages`
 const fontHeading = localFont({
@@ -40,10 +34,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s | ${siteConfig.name}`,
-  },
+  title: { default: siteConfig.name, template: `%s | ${siteConfig.name}` },
   description: siteConfig.description,
   keywords: [
     '8hourrelay',
@@ -61,12 +52,7 @@ export const metadata = {
     description: siteConfig.description,
     siteName: siteConfig.name,
     images: [
-      {
-        url: ogUrl.toString(),
-        width: 1200,
-        height: 630,
-        alt: siteConfig.name,
-      },
+      { url: ogUrl.toString(), width: 1200, height: 630, alt: siteConfig.name },
     ],
   },
   twitter: {
@@ -85,9 +71,7 @@ export const metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang={defaultLng} suppressHydrationWarning>
       <GoogleAnalytics GA_TRACKING_ID={process.env.GA_TRACKING_ID!} />
@@ -98,7 +82,7 @@ export default function RootLayout({
           <Toaster richColors closeButton />
           <TailwindIndicator />
           <Analytics />
-          <PostHogPageView />
+          <PostHogWrapper />
         </AppProvider>
       </body>
     </html>

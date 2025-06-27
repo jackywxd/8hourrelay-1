@@ -1,14 +1,13 @@
-import MessageForm from './message';
+import GallerySection from './gallery';
 import HeroSection from './hero';
-import SponsorSection from './sponsors';
 import MarkCalendarSection from './markCalendar';
+import MessageForm from './message';
 import MissionSection from './mission';
 import RulesSection from './rules';
 import VolunteeringSection from './volunteering';
-import GallerySection from './gallery';
 
-import './landing.css';
 import '@/styles/form.css';
+import './landing.css';
 
 export default async function Web() {
   return (

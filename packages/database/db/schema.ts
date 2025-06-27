@@ -32,7 +32,8 @@ export function lower(col: AnyPgColumn): SQL {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-const stage = process.env.STAGE || 'dev';
+// hardcode the stage to prod, we don't need to change it
+const stage = 'prod';
 
 export const createTable = pgTableCreator(
   (name) => `8hourrelay_${stage}_${name}`,
@@ -65,15 +66,15 @@ export const racesTable = createTable(
   {
     id: serial('id').primaryKey(),
     year: varchar('year', { length: 4 }).notNull(),
-    name: varchar('name', { length: 256 }).notNull(), // race name: adult or kids
-    isCompetitive: boolean('isCompetitive').notNull(), // is this race will calculate result
+    name: varchar('name', { length: 256 }).notNull(),
+    isCompetitive: boolean('isCompetitive').notNull(),
     description: varchar('description', { length: 2048 }),
     entryFee: integer('entryFee').notNull(),
     lowerAge: integer('lowerAge'),
     upperAge: integer('upperAge'),
     maxTeamSize: integer('maxTeamSize'),
     minFemale: integer('minFemale'),
-    lookupKey: varchar('lookupKey', { length: 256 }), // stripe price lookup_key
+    lookupKey: varchar('lookupKey', { length: 256 }),
     stripePrice: json('stripePrice'),
     eventId: integer('eventId').references(() => eventsTable.id),
   },
@@ -102,31 +103,23 @@ export const teamsTable = createTable(
     password: varchar('password', { length: 256 }),
     isOpen: boolean('isOpen').default(true),
     state: varchar('state', { length: 10 }).default('PENDING'),
-
-    // captain of the team
     captainId: integer('captainId').references(() => usersTable.id),
-
-    // owner of the team
     userId: integer('userId')
       .notNull()
       .references(() => usersTable.id),
     raceId: integer('raceId')
       .notNull()
       .references(() => racesTable.id),
-
-    // payment session Id, it cloud be null when payment is not needed
     sessionId: varchar('sessionId', { length: 256 }).references(
       () => sessionsTable.sessionId,
     ),
   },
   (table) => ({
     teamNameIndex: index('name_index').on(table.name),
-    // each yearn the team name should be unique
     uniqueYearTeamName: unique(`${stage}_unique_year_team_name`).on(
       table.year,
       table.name,
     ),
-    // each year and user can only have one team
     uniqueYearUser: unique(`${stage}_unique_year_user`).on(
       table.year,
       table.userId,
@@ -175,16 +168,14 @@ export const usersTable = createTable(
     birthYear: varchar('birthYear', { length: 16 }),
     personalBest: varchar('personalBest', { length: 256 }),
     avatarUrl: varchar('avatarUrl', { length: 1024 }),
-    customerId: varchar('customerId', { length: 256 }), // stripe customer id
+    customerId: varchar('customerId', { length: 256 }),
     phone: varchar('phone', { length: 16 }),
     address: varchar('address', { length: 1024 }),
   },
-  (table) => {
-    return {
-      uidIndex: index('uid_index').on(table.uid),
-      emailIndex: index('email_index').on(table.email),
-    };
-  },
+  (table) => ({
+    uidIndex: index('uid_index').on(table.uid),
+    emailIndex: index('email_index').on(table.email),
+  }),
 );
 
 export const emailInvitationsTable = createTable('emailInvitations', {
@@ -288,7 +279,7 @@ export const promoCodesTable = createTable(
     code: varchar('code', { length: 256 }).notNull().unique(),
     expiresAt: timestamp('expiresAt').notNull(),
     maxUsage: integer('maxUsage').notNull(),
-    isActive: boolean('isActive').notNull().default(true), // whether this promo code is active
+    isActive: boolean('isActive').notNull().default(true),
     createdAt: timestamp('createdAt')
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -484,26 +475,26 @@ export const insertTeamSchema = createInsertSchema(teamsTable, {
 });
 
 export const updateTeamSchema = createInsertSchema(teamsTable, {
-  name: (schema) => schema.name.optional(),
-  year: (schema) => schema.year.optional(),
-  password: (schema) => schema.password.optional(),
-  captainId: (schema) => schema.captainId.optional(),
-  userId: (schema) => schema.userId.optional(),
-  raceId: (schema) => schema.raceId.optional(),
+  name: z.string().min(1).max(256).optional(),
+  year: z.string().length(4).optional(),
+  password: z.string().min(1).max(256).optional(),
+  captainId: z.number().optional(),
+  userId: z.number().optional(),
+  raceId: z.number().optional(),
 });
 export const selectTeamSchema = createSelectSchema(teamsTable);
 
 export const insertUserSchema = createInsertSchema(usersTable, {
-  email: (schema) => schema.email.email(),
+  email: z.string().email(),
 });
 export const selectUserSchema = createSelectSchema(usersTable);
 export const updateUserSchema = createInsertSchema(usersTable, {
-  email: (schema) => schema.email.email().optional(),
-  uid: (schema) => schema.uid.optional(),
+  email: z.string().email().optional(),
+  uid: z.string().optional(),
 });
 
 export const insertRaceEntrySchema = createInsertSchema(raceEntriesTable, {
-  email: (schema) => schema.email.email(),
+  email: z.string().email(),
 });
 
 export const insertRaceEntryToTeamsSchema = createInsertSchema(
@@ -513,39 +504,37 @@ export const insertRaceEntryToTeamsSchema = createInsertSchema(
 export const updateRaceEntryToTeamsSchema = createInsertSchema(
   raceEntriesToTeamsTable,
   {
-    userId: (schema) => schema.userId.optional(),
-    teamId: (schema) => schema.teamId.optional(),
-    raceEntryId: (schema) => schema.raceEntryId.optional(),
+    userId: z.number().optional(),
+    teamId: z.number().optional(),
+    raceEntryId: z.number().optional(),
   },
 );
 
 export const updateRaceEntrySchema = createInsertSchema(raceEntriesTable, {
-  email: (schema) => schema.email.email().optional(),
-  firstName: (schema) => schema.firstName.optional(),
-  lastName: (schema) => schema.lastName.optional(),
-  phone: (schema) => schema.phone.optional(),
-  birthYear: (schema) => schema.birthYear.optional(),
-  gender: (schema) => schema.gender.optional(),
-  isActive: (schema) => schema.isActive.optional(),
-  isForOther: (schema) => schema.isForOther.optional(),
-  size: (schema) => schema.size.optional(),
-  emergencyName: (schema) => schema.emergencyName.optional(),
-  emergencyPhone: (schema) => schema.emergencyPhone.optional(),
-  emailConsent: (schema) => schema.emailConsent.optional(),
-  smsOptIn: (schema) => schema.smsOptIn.optional(),
-  accepted: (schema) => schema.accepted.optional(),
-  year: (schema) => schema.year.optional(),
-  userId: (schema) => schema.userId.optional(),
-  sessionId: (schema) => schema.sessionId.optional(),
+  email: z.string().email().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  phone: z.string().optional(),
+  birthYear: z.string().optional(),
+  gender: z.enum(genderEnum).optional(),
+  isActive: z.boolean().optional(),
+  isForOther: z.boolean().optional(),
+  size: z.enum(sizeEnum).optional(),
+  emergencyName: z.string().optional(),
+  emergencyPhone: z.string().optional(),
+  emailConsent: z.boolean().optional(),
+  smsOptIn: z.boolean().optional(),
+  accepted: z.boolean().optional(),
+  year: z.string().optional(),
+  userId: z.number().optional(),
+  sessionId: z.string().optional(),
 });
 
 export const selectRaceEntrySchema = createSelectSchema(raceEntriesTable);
 
 export const insertEmailInvitationSchema = createInsertSchema(
   emailInvitationsTable,
-  {
-    email: (schema) => schema.email.email(),
-  },
+  { email: z.string().email() },
 );
 
 export const selectEmailInvitationSchema = createSelectSchema(
@@ -566,5 +555,5 @@ export const selectSessionSchema = createSelectSchema(sessionsTable);
 
 export const insertMessageSchema = createInsertSchema(messagesTable, {
   message: z.string().min(1).max(256),
-  email: (schema) => schema.email.email(),
+  email: z.string().email(),
 });

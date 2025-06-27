@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { sendMessage } from '@/actions/sendMsgActions';
@@ -13,11 +13,7 @@ const messageFormSchema = z.object({
   message: z.string().min(1, { message: 'Message is required' }),
 });
 
-const init = {
-  name: '',
-  email: '',
-  message: '',
-};
+const init = { name: '', email: '', message: '' };
 
 function MessageForm() {
   const [pending, startTransition] = useTransition();
@@ -49,7 +45,7 @@ function MessageForm() {
     });
   };
   return (
-    <div className="content-container large text-white">
+    <div className="content-container large container text-white">
       <div className="contact-deck">
         Have question? Need some help?
         <p className="description">
@@ -119,7 +115,7 @@ function MessageForm() {
           </div>
         </div>
 
-        <div className="button-container mb-20 mt-5">
+        <div className="button-container mt-5 mb-20">
           <button className="btn btn-large btn-primary blue">
             {pending ? (
               <div className="flex items-center gap-1">

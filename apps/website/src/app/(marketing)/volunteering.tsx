@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function VolunteeringSection() {
   return (
-    <div className="marathon-bg relative">
+    <div className="marathon-bg relative container">
       <Image
         className="h-full w-full object-cover"
         src="/img/marathon_ppl.jpg"
@@ -11,8 +11,11 @@ export default function VolunteeringSection() {
         fill
         quality={70}
       />
-      <section className="volunteering relative z-10" id="volunteering">
-        <div className="content-container">
+      <section
+        className="volunteering relative z-10 container"
+        id="volunteering"
+      >
+        <div className="content-container container">
           <div className="landing-section-title">Volunteering</div>
           <h3 className="tight">
             Experience the power of community and wellness at the Vancouver 8
@@ -33,8 +36,8 @@ export default function VolunteeringSection() {
           </Link>
         </div>
       </section>
-      <section className="sponsorship relative z-10" id="sponsorship">
-        <div className="content-container large">
+      <section className="sponsorship relative z-10 container" id="sponsorship">
+        <div className="content-container large container">
           <div className="landing-section-title">Sponsorship</div>
           <h3 className="tight">
             Support the Vancouver 8 Hour Relay - Unite for health and unity!
@@ -76,7 +79,7 @@ export default function VolunteeringSection() {
               </div>
             </div>
 
-            <div className="grid-item">
+            <div className="grid-item container">
               <h4>Sponsorship Levels</h4>
               <div className="group">
                 <h5>

@@ -7,8 +7,8 @@ const navigation = [
   { name: 'The Event', href: '/#root' },
   { name: 'Mission', href: '/#ourMission' },
   { name: 'RULES', href: '/#rules' },
-  { name: 'Volunteering', href: '/#volunteering' },
-  { name: 'Sponsorship', href: '/#sponsorship' },
+  // { name: 'Volunteering', href: '/#volunteering' },
+  // { name: 'Sponsorship', href: '/#sponsorship' },
   { name: 'Registration', href: '/registration' },
   { name: 'teams', href: '/teams' },
 ];

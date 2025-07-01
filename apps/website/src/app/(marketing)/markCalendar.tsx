@@ -6,15 +6,16 @@ export default function MarkCalendarSection() {
       <div className="landing-section-title">Mark Your Calendar</div>
       <section className="content-container large container">
         <div className="event-info-item entry-fee">
-          <div className="label">Entry Fee</div>
+          <div className="label">Team Fee</div>
           <div className="fee-container">
             <div className="fee1">
-              <div className="fee">$35</div>
-              <div className="category">OPEN/MASTER</div>
+              <div className="fee">$320</div>
+              <div className="category">ULTRA</div>
             </div>
             <div className="fee2">
-              <div className="fee">$20</div>
-              <div className="category">YOUTH</div>
+              <div className="fee">$450/$550</div>
+              <div className="category">&lt;= 12 / &gt; 12</div>
+              <div className="category">MASTER</div>
             </div>
           </div>
         </div>
@@ -24,21 +25,22 @@ export default function MarkCalendarSection() {
           <div className="value">
             8:00am – 4:00pm
             <br />
-            {siteConfig.event.time}
+            September 13, 2025
           </div>
         </div>
         <div className="event-info-item">
           <div className="label">Where</div>
           <div className="value">
-            {siteConfig.event.location}
             <br />
-            British Columbia
+            Swangard Stadium
+            <br />
+            Burnaby, British Columbia
           </div>
           <div className="notes"></div>
         </div>
         <div className="event-info-item">
           <div className="label">Entry Deadline</div>
-          <div className="value">{siteConfig.event.registerDeadline}</div>
+          <div className="value">Sep 07, 2025</div>
         </div>
       </section>
     </section>

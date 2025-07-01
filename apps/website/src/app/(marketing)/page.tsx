@@ -16,7 +16,7 @@ export default async function Web() {
       <MarkCalendarSection />
       <MissionSection />
       <RulesSection />
-      <VolunteeringSection />
+      {/*<VolunteeringSection />*/}
       <GallerySection />
       <div className="keep-in-touch">
         <div className="landing-section-title">Keep in touch</div>

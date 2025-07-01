@@ -6,8 +6,7 @@ import MissionSection from './mission';
 import RulesSection from './rules';
 import VolunteeringSection from './volunteering';
 
-import '@/styles/form.css';
-import './landing.css';
+import '@/styles/landing.css';
 
 export default async function Web() {
   return (

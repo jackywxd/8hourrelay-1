@@ -1,3 +1,5 @@
+import { siteConfig } from '@/config/site';
+
 export default function MarkCalendarSection() {
   return (
     <section className="mark-calendar">
@@ -18,18 +20,17 @@ export default function MarkCalendarSection() {
         </div>
         <div className="event-info-item">
           <div className="label">When</div>
+
           <div className="value">
             8:00am – 4:00pm
             <br />
-            September 7, 2024
+            {siteConfig.event.time}
           </div>
         </div>
         <div className="event-info-item">
           <div className="label">Where</div>
           <div className="value">
-            Field #4
-            <br />
-            South Surrey Athletic Park
+            {siteConfig.event.location}
             <br />
             British Columbia
           </div>
@@ -37,7 +38,7 @@ export default function MarkCalendarSection() {
         </div>
         <div className="event-info-item">
           <div className="label">Entry Deadline</div>
-          <div className="value">Aug 31, 2024</div>
+          <div className="value">{siteConfig.event.registerDeadline}</div>
         </div>
       </section>
     </section>

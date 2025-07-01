@@ -10,10 +10,10 @@ import { SignInForm } from './signin-form';
 
 export default function SignInPage() {
   return (
-    <div className="container flex min-h-screen w-screen flex-col items-center justify-center py-8">
+    <div className="flex min-h-screen w-screen flex-col items-center justify-center py-8">
       <ButtonLink
         href="/"
-        className="absolute left-4 top-4 md:left-8 md:top-8"
+        className="absolute top-4 left-4 md:top-8 md:left-8"
         startIconName="ChevronLeft"
         text="ButtonLink.home"
         translate="yes"

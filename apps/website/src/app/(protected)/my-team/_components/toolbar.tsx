@@ -1,9 +1,7 @@
 'use client';
 
-import { revalidatePath } from 'next/cache';
 import { useTransition } from 'react';
 import { CSVLink } from 'react-csv';
-import { Data } from 'react-csv/components/CommonPropTypes';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +9,17 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
 
 import { DataTableViewOptions } from './data-table-view-option';
+
+// 扩展 Table Meta 类型
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData> {
+    validRows?: Record<string, any>;
+    updateDB?: () => void;
+  }
+}
+
+// react-csv 类型声明
+type CSVData = Array<Record<string, any>> | Array<Array<string | number>>;
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -23,7 +32,8 @@ export function DataTableToolbar<TData>({
 }: DataTableToolbarProps<TData>) {
   const [pending, startTransition] = useTransition();
 
-  const dataChanged = Object.keys(table.options.meta?.validRows).length > 0;
+  const dataChanged =
+    Object.keys(table.options.meta?.validRows || {}).length > 0;
 
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -31,8 +41,9 @@ export function DataTableToolbar<TData>({
     startTransition(async () => {
       console.log(`save data`);
       console.log(`validRows`, table.options.meta?.validRows);
-      table.options.meta?.updateDB();
-      revalidatePath(`my-team`);
+      table.options.meta?.updateDB?.();
+      // 移除 revalidatePath 调用，因为它不能在客户端组件中使用
+      // 如果需要重新验证数据，应该通过其他方式实现
     });
   }
   return (
@@ -71,7 +82,7 @@ export function DataTableToolbar<TData>({
         )}
         {data?.length > 0 && (
           <CSVLink
-            data={data as Data}
+            data={data as CSVData}
             filename={'my-file.csv'}
             className="flex items-center text-sm"
             target="_blank"

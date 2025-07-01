@@ -1,3 +1,5 @@
+import { siteConfig } from '@/config/site';
+
 export default function MarkCalendarSection() {
   return (
     <section className="mark-calendar">
@@ -19,6 +21,7 @@ export default function MarkCalendarSection() {
         </div>
         <div className="event-info-item">
           <div className="label">When</div>
+
           <div className="value">
             8:00am – 4:00pm
             <br />

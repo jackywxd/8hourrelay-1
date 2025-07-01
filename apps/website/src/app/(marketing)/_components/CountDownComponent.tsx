@@ -2,7 +2,7 @@ import { useAnimate } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 // NOTE: Change this date to whatever date you want to countdown to :)
-const COUNTDOWN_FROM = '2024-09-07';
+const COUNTDOWN_FROM = '2025-09-13';
 
 const SECOND = 1000;
 const MINUTE = SECOND * 60;
@@ -13,7 +13,7 @@ type Units = 'Day' | 'Hour' | 'Minute' | 'Second';
 
 export const ShiftingCountdown = () => {
   return (
-    <section className="countdown-container">
+    <section className="countdown-container mt-4 flex flex-row">
       <CountdownItem unit="Day" text="days" />
       <CountdownItem unit="Hour" text="hours" />
       <CountdownItem unit="Minute" text="minutes" />
@@ -26,8 +26,8 @@ const CountdownItem = ({ unit, text }: { unit: Units; text: string }) => {
   const { ref, time } = useTimer(unit);
 
   return (
-    <div className="countdown-item">
-      <div className="relative w-full overflow-hidden text-center">
+    <div className="countdown-item mt-2">
+      <div className="relative w-full text-center">
         <span ref={ref} className="number">
           {time}
         </span>

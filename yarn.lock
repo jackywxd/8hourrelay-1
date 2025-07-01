@@ -2595,12 +2595,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-csv@npm:^1.1.10":
+  version: 1.1.10
+  resolution: "@types/react-csv@npm:1.1.10"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10/424b3eefc565e5cc438cce3e64a1a6181be3ae2c9824570283dea7eccd4c31405e9ee88926ab1f8901817df47777fca2fab41e39dcf03c04b53817ba2353ae0d
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:^18.3.7":
   version: 18.3.7
   resolution: "@types/react-dom@npm:18.3.7"
   peerDependencies:
     "@types/react": ^18.0.0
   checksum: 10/317569219366d487a3103ba1e5e47154e95a002915fdcf73a44162c48fe49c3a57fcf7f57fc6979e70d447112681e6b13c6c3c1df289db8b544df4aab2d318f3
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:*":
+  version: 19.1.8
+  resolution: "@types/react@npm:19.1.8"
+  dependencies:
+    csstype: "npm:^3.0.2"
+  checksum: 10/a3e6fe0f60f22828ef887f30993aa147b71532d7b1219dd00d246277eb7a9ca01ec533096237fa21ca1bccb3653373b4e8e59e5ae59f9c793058384bbc1f4d5c
   languageName: node
   linkType: hard
 
@@ -8518,6 +8536,7 @@ __metadata:
     "@types/jsonwebtoken": "npm:^9.0.10"
     "@types/node": "npm:^20.19.1"
     "@types/react": "npm:^18.3.23"
+    "@types/react-csv": "npm:^1.1.10"
     "@types/react-dom": "npm:^18.3.7"
     "@vercel/analytics": "npm:^1.5.0"
     "@vercel/postgres": "npm:^0.10.0"

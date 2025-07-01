@@ -1,10 +1,41 @@
+const year = '2025';
 export const siteConfig = {
   name: '8 Hour Relay',
   description: 'Vancouver 8 hour relay official web site',
   url: 'https://8hourrelay.com',
   ogImage: 'https://8hourrelay.com/og.jpg',
-  links: {
-    twitter: '',
-    github: '',
+  links: { twitter: '', github: '' },
+  event: {
+    year,
+    name: `8HourRelay`,
+    description: `8 Hour Relay Race - 2025`,
+    location: 'Swangard Stadium, Burnaby',
+    time: 'Sep 13 2025',
+    isActive: true,
+    createdAt: new Date(),
+    registerDeadline: 'August 31 2025',
   },
+  races: [
+    {
+      year,
+      name: 'Open',
+      description: '8 Hour Relay - Open Race',
+      entryFee: 35,
+      isCompetitive: true,
+      lowerAge: 18,
+      maxTeamSize: 12,
+      minFemale: 4,
+      lookupKey: 'open_entry_fee',
+    },
+    {
+      year,
+      name: 'Master',
+      description: '8 Hour Relay - Master Race',
+      entryFee: 35,
+      maxTeamSize: 24,
+      isCompetitive: false,
+      lowerAge: 18,
+      lookupKey: 'master_entry_fee',
+    },
+  ],
 };
